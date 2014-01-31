@@ -107,12 +107,20 @@ slice_chest = 120
 plt.plot(freqs, 10 * np.log10(chestPxx[:, slice_chest]))
 
 plt.xlim(xmax = 2000)
+plt.ylim(ymin = -20)
+
+plt.xlabel('frequency [Hz]')
+
+plt.gca().xaxis.set_major_locator( plt.MaxNLocator(nbins = 10) )
 
 # <codecell>
 
-plt.plot(falsetto, '-')
+plt.plot(falsetto / float(np.max(falsetto)), '-')
 
 plt.xlim(xmin = 45000, xmax = 52000)
+plt.ylim(ymin = -0.5, ymax = 0.6)
+
+plt.title('falsetto around onset')
 
 # <codecell>
 
@@ -120,6 +128,8 @@ falsettoPxx, freqs, timebins, specgramimage = plt.specgram(falsetto, NFFT = Nfft
                                                            origin = 'upper')
 
 plt.ylim(ymax = 2000)
+
+plt.title('falsetto')
 
 # <codecell>
 
@@ -160,6 +170,10 @@ backgroundPxx, freqs, timebins, specgramimage = plt.specgram(background, NFFT = 
 
 plt.ylim(ymax = 2000)
 
+plt.xlabel('frequency [Hz]')
+
+plt.title('background noise')
+
 # <codecell>
 
 plt.imshow(10 * np.log10(backgroundPxx), aspect = 'auto')
@@ -180,6 +194,10 @@ plt.ylim(ymin = -20)
 plt.xlabel('frequency [Hz]')
 plt.ylabel('power [dB]')
 
+plt.title('background noise, spectra averaged')
+
+plt.gca().xaxis.set_major_locator( plt.MaxNLocator(nbins = 10) )
+
 plt.savefig('backgroundnoise_subglottalresonance.pdf', orientation = 'landscape', bbox_inches = 'tight')
 
 # <codecell>
@@ -189,7 +207,11 @@ import audiolazy as lz
 # <codecell>
 
 s, Hz = lz.sHz(fs)
-print s, Hz
+print "s: {}, Hz: {}".format(s, Hz)
+
+# <codecell>
+
+Hz == (2 * lz.pi / fs)
 
 # <codecell>
 
@@ -214,8 +236,11 @@ data_chest = stream_chest.take()
 data_falsetto = stream_falsetto.take()
 data_background = stream_background.take()
 
+# resample the signals to limit the bandwidth of the lpc and to force the poles to fall within 6.25 KHz range
+# 6.25 = 50 / 4 / 2
 data_chest = lz.resample(data_chest, old = 4, new = 1).take(lz.inf)
 
+# 50 / 2 / 2 = 12.5
 data_falsetto = lz.resample(data_falsetto, old = 2, new = 1).take(lz.inf)
 
 data_background = lz.resample(data_background, old = 4, new = 1).take(lz.inf)
@@ -247,19 +272,7 @@ print lpc_background.error
 
 # <codecell>
 
-print lpc_chest
-
-# <codecell>
-
-Hz == (2 * lz.pi / fs)
-
-# <codecell>
-
 plt.close('all')
-
-mpl.interactive(False)
-plt.interactive(False)
-plt.ioff()
 
 maxf = 5000.0
 
@@ -281,7 +294,6 @@ plt.savefig('lpc_background.pdf', orientation = 'landscape', bbox_inches = 'tigh
 # <codecell>
 
 plt.close('all')
-plt.ioff()
 
 # calculates the DFT the VERY slow way with discrete complex function projections
 fig = (1e1 / lpc_background).plot(blk = data_chest, 
@@ -293,27 +305,13 @@ for a in fig.axes:
 
 # <codecell>
 
-plt.plot(freqs, 10 * np.log10(chestPxx[:, slice_chest]), '-', label = 'chest')
-
-# plt.plot(freqs, 10 * np.log10(falsettoPxx[:, slice_falsetto]), '-', label = 'falsetto')
-
-plt.xlim(xmax = 5000)
-
-plt.ylim(ymin = -40)
-
-plt.legend()
-
-plt.xlabel('frequency [Hz]')
-plt.ylabel('power [dB]')
-
-# <codecell>
-
 IF_chest = lpc_background(data_chest).take(lz.inf)
 IF_falsetto = lpc_background(data_falsetto).take(lz.inf)
 
 # <codecell>
 
 PxxIF_chest, f_IF_chest, t_IF = mpl.mlab.specgram(IF_chest, NFFT = Nfft / 4, Fs = fs / 4, noverlap = 0)
+
 PxxIF_falsetto, f_IF_falsetto, t_IF = mpl.mlab.specgram(IF_falsetto, NFFT = Nfft / 2, Fs = fs / 2, noverlap = 0)
 
 # <codecell>
@@ -335,4 +333,7 @@ plt.xlabel('frequency [log2(Hz)]')
 plt.ylabel('power [dB]')
 
 plt.savefig('filtered_chest_falsetto_spectra.pdf', orientation = 'landscape', bbox_inches = 'tight')
+
+# <codecell>
+
 
