@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 # <nbformat>3.0</nbformat>
 
+# <markdowncell>
+
+# Spectral Analysis of Chest and Falsetto at onset
+# ---------------
+# 
+# Need to compare chest-like and a falsetto-like phonation close to onset of phonation in terms of the spectral shape
+
 # <codecell>
 
 %matplotlib inline
