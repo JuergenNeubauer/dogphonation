@@ -41,13 +41,15 @@ print "falsetto: ", falsetto_wavfilename
 
 # <codecell>
 
-!play "$falsetto_wavfilename"
+# !play "$falsetto_wavfilename"
 
 # <codecell>
 
 backgroundnoisefile = os.path.join(datadir, 
                                    'SLN_trunkRLN_NoTA Wed Mar 21 2012 14 46 34.wavfiles',
                                    'SLN_trunkRLN_NoTA Wed Mar 21 2012 14 46 34.001.psub.wav')
+
+print "background noise: ", backgroundnoisefile
 
 # <codecell>
 
@@ -60,9 +62,12 @@ fs, falsetto = wavfile.read(falsetto_wavfilename)
 
 # <codecell>
 
-plt.plot(chest, '-')
+plt.plot(chest / float(np.max(chest)), '-')
 
 plt.xlim(xmin = 3000, xmax = 20000)
+plt.ylim(ymin = -0.5, ymax = 0.5)
+
+plt.title('chest around onset')
 
 # <codecell>
 
@@ -77,6 +82,11 @@ chestPxx, freqs, timebins, specgramimage = plt.specgram(chest, NFFT = Nfft, Fs =
 
 plt.ylim(ymax = 1000)
 
+plt.xlabel('time [s]')
+plt.ylabel('frequency [Hz]')
+
+plt.title('chest')
+
 # <codecell>
 
 plt.imshow(10 * np.log10(chestPxx), aspect = 'auto')
@@ -84,6 +94,11 @@ plt.imshow(10 * np.log10(chestPxx), aspect = 'auto')
 plt.xlim(xmax = 200)
 
 plt.ylim(ymax = np.nanargmax(np.where(freqs < 1000, freqs, np.nan)))
+
+plt.xlabel('time [time bin]')
+plt.ylabel('frequency [frequency bin]')
+
+plt.title('chest around onset')
 
 # <codecell>
 
@@ -320,8 +335,4 @@ plt.xlabel('frequency [log2(Hz)]')
 plt.ylabel('power [dB]')
 
 plt.savefig('filtered_chest_falsetto_spectra.pdf', orientation = 'landscape', bbox_inches = 'tight')
-
-# <codecell>
-
-blabal bal
 
