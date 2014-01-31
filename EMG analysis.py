@@ -16,6 +16,23 @@ import numpy as np
 
 # <codecell>
 
+import scipy.signal
+
+# <codecell>
+
+# Mexican hat wavelet
+scipy.signal.ricker()
+
+# <codecell>
+
+scipy.signal.cwt()
+
+# <codecell>
+
+scipy.signal.find_peaks_cwt()
+
+# <codecell>
+
 sys.path.append('/extra/InVivoDog/python/cine/tools')
 
 # <codecell>
@@ -59,7 +76,7 @@ allhdf5files = glob.glob('/extra/InVivoDog/InVivoDog_2013_12_18/data LabView/*/*
 
 # <codecell>
 
-import time, datetime
+import time
 
 # <codecell>
 
@@ -111,6 +128,8 @@ EMG = dict(zip(signalnames, nervenames))
 print EMG
 
 gains = {'EMG' + str(numitem + 1): item for numitem, item in enumerate([1e3, 1e3, 1e3, 1e3])}
+
+isoampgain = [0.5, 0.5, 0.5, 0.5]
 
 def updategains(newgaindict = gains):
     gains.update(newgaindict)
@@ -185,15 +204,16 @@ ls -alot "$datadir"/"range finding and EMG"
 
 # <codecell>
 
-ls -alot "$datadir"/"range finding and EMG long run"
-
-# <codecell>
-
 ls -alot "$datadir"/"range finding and EMG 30Hz"
 
 # <codecell>
 
 stimulationcondition = "range finding and EMG 80Hz" # "range finding and EMG long run" # "range finding and EMG 30Hz"
+
+if 0:
+    datadir = '/extra/InVivoDog/InVivoDog_2013_12_18/data LabView/testing'
+    stimulated_nerve = 'testing'
+    stimulationcondition = 'test'
 
 datadirname = os.path.join(datadir, stimulationcondition)
 datafilenamestart = "%s %s" % (stimulated_nerve, stimulationcondition)
@@ -208,14 +228,16 @@ d = dogdata.DogData(datadir = datadirname,
 
 # <codecell>
 
-d.datafilename
+print d.datafilename
+print d.datetimestamp
 
 # <codecell>
 
-d.timestamp = datetimestamp(d.datafilename)
-
-e = [event for event in events if timeduringexperiment(hourminutes = event['time']) < d.timestamp][-1]
-
+try:
+    e = [event for event in events if timeduringexperiment(hourminutes = event['time']) < d.datetimestamp][-1]
+except:
+    e = sorted(events, key = lambda x: x['time'])[0]
+    
 for key in ['gains', 'nervenames']:
     setattr(d, key, e[key])
 
@@ -255,17 +277,62 @@ d.frep = frep
 
 # <codecell>
 
+print d.NEMG
+print d.Nlevels
+print d.Nnerves
+print d.Nrecnums
+
+# <codecell>
+
+def hdf5info(filename = None):
+    item = filename
+    
+    print "datadirname: {}\ndatafilename: {}".format(*os.path.split(item))
+    # d = dogdata.DogData(datadir = datadirname,
+    #                     datafile = filenames[1])
+
+    # print "{}".format(os.path.basename(item).split('Wed')[0].strip())
+    print datetimestamp(item)
+    
+    try:
+        print 'frep = ', [float(i.replace('Hz', '')) for i in item.split() if i.endswith('Hz')][0]
+    except:
+        print 'frep = 100'
+        
+    # stimulated_nerve, stimulationcondition = 
+    print "stimulated_nerve: {}\nstimulationcondition: {}".format(*os.path.split(
+                                                                    os.path.dirname(
+                                                                           item.split('/data LabView/')[1]
+                                                                           )
+                                                           ))
+    try:
+        print "gains: {gains}\nnervenames: {nervenames}".format(**[event for event in events if timeduringexperiment(event['time']) < datetimestamp(item)][-1])
+    except:
+        print "before experiments"
+        print sorted(events, key = lambda x: x['time'])[0]
+        
+    print
+    
+for item in orderedhdf5files:
+    hdf5info(filename = item)
+
+# <codecell>
+
+sorted(events, key = lambda x: x['time'])[0]
+
+# <codecell>
+
 d.get_all_data()
 
 # <codecell>
 
 NEMG, Nstimulations, Nsamples = d.allEMG.shape
 
-print d.allEMG.shape
-print d.NEMG
-print d.Nlevels
-print d.Nnerves
-print d.Nrecnums
+print 'shape: ', d.allEMG.shape
+print 'NEMG: ', d.NEMG
+print 'Nlevels: ', d.Nlevels
+print 'Nnerves: ', d.Nnerves
+print 'Nrecnums: ', d.Nrecnums
 
 # <codecell>
 
@@ -380,27 +447,136 @@ cleaned_EMG = d.allEMG[:, :, nervedelay_samples : (nervedelay_samples + Npulses 
 
 # <codecell>
 
+from collections import OrderedDict
+
+# <codecell>
+
+o_unordered = {'%s%d' % (a, anum):None for a in ['a', 'b', 'c', 'd'] for anum in [1, 2]}
+
+o = OrderedDict(sorted(o_unordered.items(), key = lambda x: x[0]))
+o
+
+# <codecell>
+
+try:
+    plt.close('all')
+    del fig
+    del ax
+    del gs
+except:
+    pass
+
+# make figure size square
+fig = plt.figure(figsize = (40, 20)) # set to large number for better resolution, e.g. (20, 20)
+fig.clf()
+
+gs = mpl.gridspec.GridSpec(4, 2)
+gs.update(wspace = 0.01, hspace = 0.1)
+
+ax_names = {"%s%d" % (a, anum): None for a in ['a', 'b', 'c', 'd'] for anum in [1, 2]}
+ax = OrderedDict(sorted(ax_names.items(), key = lambda x: x[0]))
+
+# <codecell>
+
+fig.clf()
+
+for akey in ax.keys():
+    ax[akey].cla()
+
+for anum, akey in enumerate(ax.keys()):
+    ax[akey] = fig.add_subplot(gs[anum])
+    
+    ax[akey].set_anchor('W')
+    ax[akey].update_params()
+    
+    if anum is 6:
+        ax[akey].set_ylabel('EMG potential [mV]')
+        
+    if anum % 2 == 1:
+        ax[akey].set_yticklabels([])
+    if anum < 6:
+        ax[akey].set_xticklabels([])
+    else:
+        ax[akey].set_xlabel('time [ms]')
+    
+    # debugging
+    # ax[akey].text(0.5, 0.5, akey)
+    
+fig.canvas.draw()
+
+# <codecell>
+
+stimrep = 2
+
+for anum, akey in enumerate(ax.keys()):
+    if anum % 2 == 0:
+        ax[akey].plot(d.time_EMG[:Nend] * 1000, 
+                      d.allEMG[anum/2, stimrep, nervedelay_samples:nervedelay_samples + Nend] / d.gains[anum/2] * 1000 * 2,
+                      'k-', 
+                      label = nervenames[anum / 2])
+        
+        ax[akey].legend()
+        ax[akey].set_xlim(xmax = 1550)
+        ylims = ax[akey].get_ylim()
+    else:
+        ax[akey].plot(d.time_EMG[:Nend/8] * 1000, 
+                      d.allEMG[anum/2, stimrep, nervedelay_samples:nervedelay_samples + Nend/8] / d.gains[anum/2] * 1000 * 2,
+                      'k-')
+        
+        ax[akey].set_xlim(xmax = 1550 / 8)
+        ax[akey].set_ylim(ylims)
+        
+ax['a1'].set_title("stimulated: {}, {}, stimrep: {}".format(stimulated_nerve, stimulationcondition, stimrep))
+
+fig
+
+# <codecell>
+
+print d.datadir
+print d.datafilename
+os.listdir(d.datadir)
+
+# <codecell>
+
+fig.savefig('EMGtraces_{:02}.png'.format(stimrep), orientation = 'landscape', dpi = 300, bbox_inches = 'tight')
+
+# <codecell>
+
+plt.close('all')
+
 for nervenum in range(NEMG):
     plt.figure(nervenum)
     plt.plot(d.time_EMG[:Nend] * 1000, 
-             d.allEMG[nervenum, stimrep, RLNdelay:Nend + RLNdelay].T)
+             d.allEMG[nervenum, stimrep, nervedelay_samples:nervedelay_samples + Nend] / d.gains[nervenum] * 1000 * 2,
+             'k-')
 
-    plt.title('stimulated: ' + os.path.split(datadir)[-1] + 
-              ', recorded nerve: ' + nervenames[nervenum] + 
-              ', stimulation#: ' + str(stimrep))
+    if nervenum is 0:
+        plt.title('stimulated: ' + os.path.split(datadir)[-1] + 
+                  ', recorded nerve: ' + d.nervenames[nervenum] + 
+                  ', stimulation#: ' + str(stimrep))
 
-    plt.xlabel('time [ms]')
-    plt.ylabel('EMG potential [V]')
+    if nervenum < NEMG - 1:
+        plt.xlabel('')
+        locs, labels = plt.xticks()
+        plt.xticks(locs, [])
+    else:
+        plt.xlabel('time [ms]')
     
-plt.show()
+    plt.ylabel('EMG potential [mV]')
 
 # <codecell>
 
-d.allps.shape
+# iso-amp has gain of roughly 0.5, with an offset
+# appied flow rate should have been 300 ml/s
+
+plt.imshow(d.allQ * 2, aspect = 'auto')
+plt.colorbar()
 
 # <codecell>
 
-plt.imshow(d.allps, aspect = 'auto')
+# gain of iso-amp is about 0.5
+
+plt.imshow(d.allps * 2, aspect = 'auto')
 cb = plt.colorbar()
 cb.set_label('subglottal pressure [Pa]')
 plt.xlabel('time [samples]')
@@ -416,7 +592,7 @@ plt.yticks(np.arange(0, d.Nrecnums, 4))
 
 # <codecell>
 
-plt.plot(d.allps[9, :])
+plt.plot(d.allps[9, :] * 2)
 
 # <codecell>
 
@@ -425,12 +601,13 @@ plt.title(nervenames[nervenum])
 
 # <codecell>
 
-nervenum = 3
-stimrep = 20
+nervenum = 1
+stimrep = 7
 
 print 'nervenum: ', nervenum
 print 'stimrep: ', stimrep
 
+t_EMG = d.time_EMG[:Nend]
 s = d.allEMG[nervenum, stimrep, nervedelay_samples:nervedelay_samples + Nend]
 
 maxpeakf = d.frep * 1.5
@@ -438,52 +615,238 @@ maxpeakf = d.frep * 1.5
 Nnopeaks = np.int(d.fs_EMG / maxpeakf)
 print 'Nnopeaks: ', Nnopeaks
 
-pp = d.find_peaks(s, neighbors = Nnopeaks)
-pm = d.find_peaks(-s, neighbors = Nnopeaks)
+pp, madp = d.find_peaks(s, neighbors = Nnopeaks)
+pm, madm = d.find_peaks(-s, neighbors = Nnopeaks)
+
+print len(pp)
 
 # <codecell>
 
-plt.plot(d.time_psQ, s)
-plt.plot(d.time_psQ[pp], s[pp], 'ro')
-plt.plot(d.time_psQ[pm], s[pm], 'go')
+# find_peaks_cwt is designed for SHARP peaks, needs tweaking for smooth continuous peaks!!!
+# VERY slow
+
+# peakind = scipy.signal.find_peaks_cwt(s, np.arange(Nnopeaks/4, Nnopeaks))
+
+# print len(peakind)
+
+# <codecell>
+
+plt.plot(s)
+plt.plot(peakind, s[peakind], 'ro')
+
+plt.xlim(xmax = 5000)
+
+# <codecell>
+
+plt.plot(t_EMG, s)
+plt.plot(t_EMG[pp], s[pp], 'ro')
+plt.plot(t_EMG[pm], s[pm], 'go')
 
 plt.title(nervenames[nervenum])
-#plt.xlim(xmax = 5 * 2000)
+plt.xlim(xmax = 0.2)
+
+# <codecell>
+
+plt.plot(t_EMG[pp], s[pp] / madp, 'ro')
+
+plt.xlim(xmax = 0.2)
 
 # <codecell>
 
 plt.plot(s[pp[:-1]], s[pp[1:]], 'r.')
 plt.axis('equal')
+plt.xlabel('peak_n')
+plt.ylabel('peak_n+1')
 
 # <codecell>
 
-plt.plot(d.time_EMG[pp] * 1000, 
-         s[pp] - s[pm])
+maxpeaks = s[pp]
+minpeaks = s[pm]
+peak_to_peak = s[pp] - s[pm]
+
+plt.plot(t_EMG[pp] * 1000, 
+         maxpeaks, label = 'maxima')
+plt.plot(t_EMG[pp] * 1000,
+         - minpeaks, label = 'minima')
+plt.plot(t_EMG[pp] * 1000,
+         peak_to_peak, label = 'peak-to-peak')
+
+plt.legend()
 plt.title('peak-to-peak')
 
-# <codecell>
-
-stimulationtime = 1.5 # in sec
-
-Npulses = frep * stimulationtime
-Nphase = np.round(d.fs_EMG / frep)
-Nsamples_segment = Nphase
-
-print Npulses
-print Nphase
+plt.xlabel('time [ms]')
+plt.ylabel('EMG potential []')
 
 # <codecell>
 
-cleaned_EMG = d.allEMG[:, :, RLNdelay : (RLNdelay + Npulses * Nphase)]
+plt.boxplot([np.diff(pp), np.diff(pm)])
+
+# <codecell>
+
+plt.plot(np.diff(pp))
+plt.plot(np.diff(pm))
+
+# <codecell>
+
+np.mean(np.diff(pp))
+
+# <codecell>
+
+d.frep
+
+# <codecell>
+
+print nervenum
+
+# <codecell>
+
+nervenum = 1
+
+# <codecell>
+
+# check for 60 Hz noise
+d.frep = 60
+
+stimrep = 5
+
+# <codecell>
+
+Npulses = d.frep * stimulationtime
+Nphase = d.fs_EMG / d.frep
+Nsamples_segment = np.int(Nphase) # np.round(Nphase)
+
+d.Npulses = Npulses
+d.Nsamples_segment = Nsamples_segment
+
+print "Npulses in pulse train: ", Npulses
+print "Nphase: number of samples per segment for phase averaging: ", Nphase
+Nphase = Nsamples_segment
+print "Nphase: rounded = ", Nphase
+
+# <codecell>
+
+# try to correct the buffer size by 1 sample due to sample drift
+Nphase += 0
+
+# <codecell>
+
+# show several phases together to avoid the round-off error due to 25 KHz / 60, e.g.
+Np = 2 # 2
+
+cleaned_EMG = d.allEMG[:, :, nervedelay_samples : (nervedelay_samples + (Npulses/Np) * (Np*Nphase +1))]
 
 phase = cleaned_EMG.copy()
 
 # reshape into segments for phase averaging
-phase.shape = (NEMG, Nstimulations, Npulses, -1)
+phase.shape = (NEMG, Nstimulations, -1, Np*Nphase +1)
 
 print d.allEMG.shape
 print cleaned_EMG.shape
 print phase.shape
+
+# <codecell>
+
+range(-2, -9, -1)
+
+# <codecell>
+
+cc = np.correlate(phase[nervenum, stimrep, 0, :], phase[nervenum, stimrep, 1, :], mode = 'same')
+
+# <codecell>
+
+Ncc = cc.shape[0]
+print 'Ncc = ', Ncc
+print 'zero: ', Ncc/2 # check by calculating the auto-correlation function
+print 'maximum at: ', Ncc/8 + np.argmax(cc[Ncc/8 : Ncc*7/8])
+
+# <codecell>
+
+plt.plot(np.arange(-Ncc / 2, Ncc / 2), 
+          cc)
+
+# plt.xlim(xmin = -10, xmax = 10)
+# plt.ylim(ymin = 0.15, ymax = 0.2)
+
+# <codecell>
+
+phase[nervenum, stimrep, :, :].shape
+
+# <codecell>
+
+nervenum = 1
+
+newphase = np.nan * np.ones((Npulses, Nphase))
+
+for num, pulse in enumerate(phase[nervenum, stimrep, :, :]):
+    # drop one sample
+    newphase[2*num, :] = pulse[:Nphase]
+    newphase[2*num+1, :] = pulse[Nphase+1:]
+
+# <codecell>
+
+plt.close('all')
+plt.imshow(newphase[3:, :], 
+           origin = 'lower', # 'upper'
+           aspect = 2
+           )
+
+# <codecell>
+
+plt.close('all')
+
+plt.plot(newphase[3:, :].T, alpha = 0.5)
+
+plt.plot(np.mean(newphase[:, :], axis = 0), 'r.-', ms = 15, lw = 3)
+
+if 0:
+    plt.xlim(xmax = 50)
+    plt.ylim(-0.1, 0.1)
+
+# <codecell>
+
+# plt.plot(newphase[::5, :].T)
+
+plt.plot(np.std(newphase[0:, :], axis = 0), 'k')
+plt.plot(np.std(newphase[10:, :], axis = 0), 'r')
+plt.plot(np.std(newphase[20:, :], axis = 0), 'g')
+plt.plot(np.std(newphase[30:, :], axis = 0), 'b')
+
+# <codecell>
+
+plt.plot( [np.std(np.std(newphase[N:, :], axis = 0)) for N in range(newphase.shape[0])])
+
+# <codecell>
+
+nervenum = 1
+
+# plt.plot(phase[nervenum, stimrep, ::, :].T)
+
+plt.plot((phase[nervenum, stimrep].T - np.mean(
+                 phase[nervenum, stimrep, :, :], 
+                 axis = 0
+                 ).reshape(833, -1)),
+           # aspect = 5,
+         # 'ro', mec = 'yellow', mfc = 'red'
+         )
+
+# plt.xlim(xmax = 50)
+# plt.ylim(-0.1, 0.1)
+
+# <markdowncell>
+
+# after cleaning the signal from the 60 Hz contamination (background model), do phase average with respect to the stimulation frequency
+# ---
+
+# <codecell>
+
+plt.imshow(phase[nervenum, stimrep, 3:, :], 
+           origin = 'lower', # 'upper', 
+           aspect = 5, # 'auto'
+           )
+
+plt.colorbar(orientation = 'horizontal')
+plt.title("nervenum: {}, stimrep: {}".format(nervenum, stimrep))
+# plt.clim(vmin = -0.1, vmax = .1)
 
 # <codecell>
 
@@ -498,7 +861,7 @@ def log_square(signal, reverse = False, identity = False):
 
 # <codecell>
 
-nervenum = 0
+nervenum = 1
 stimrep = 20
 
 phase_signal = log_square( phase[nervenum, stimrep, :, :] , identity = True)
@@ -512,6 +875,8 @@ mean_sign = np.mean( np.sign( phase[nervenum, stimrep, :, :] ), axis = 0)
 plt.plot(mean_sign)
 plt.plot(np.sign(mean_sign))
 
+plt.title(d.nervenames[nervenum])
+
 # <codecell>
 
 outdict = plt.boxplot( phase_signal, # [nervenum, stimrep, :, :], 
@@ -521,7 +886,7 @@ plt.xticks(np.arange(start = 0, stop = Nsamples_segment, step = Nsamples_segment
 
 # plt.ylim(ymin = -1, ymax = 1)
 
-plt.ylabel('amplitude [dB]')
+plt.ylabel('amplitude')
 plt.title(nervenames[nervenum] + ', stimrep: ' + str(stimrep))
 
 # <codecell>
@@ -635,7 +1000,7 @@ plt.xlabel('time [ms]')
 
 # <codecell>
 
-nervenum = 3
+nervenum = 1
 stimrep = 20
 
 phasemin = np.min(phase[nervenum, stimrep, :, :])
@@ -655,6 +1020,7 @@ plt.imshow(np.where(allhist > 0, allhist, np.nan).T, aspect = 'auto')
 
 plt.ylabel('EMG potential [V]')
 plt.colorbar()
+plt.title(d.nervenames[nervenum])
 
 # <codecell>
 
@@ -663,7 +1029,11 @@ print nervenum
 
 # <codecell>
 
-stimrep = 20
+phase[nervenum, stimrep].shape
+
+# <codecell>
+
+stimrep = 5
 
 for nervenum, nervename in enumerate(nervenames):
     plt.figure(nervename)
@@ -675,7 +1045,7 @@ for nervenum, nervename in enumerate(nervenames):
              np.nanmean( log_square( phase[nervenum, stimrep, :, :] ), axis = 0), 
              color = 'red', marker = 'o', ms = 10, mec = 'yellow', mfc = 'red', ls = '-', lw = 5)
     
-    plt.text(x = 25, y = 15, 
+    plt.text(x = 1, y = 15, 
              s ='stimulated: ' + os.path.split(datadir)[-1] + '\nrecorded EMG: ' + nervename + '\nstimrep#: ' + str(stimrep),
              fontsize = 20,
              verticalalignment = 'top')
@@ -693,16 +1063,6 @@ plt.show()
 
 # <codecell>
 
-from mpl_toolkits.mplot3d import Axes3D
-
-# <codecell>
-
-ax = plt.subplot(111, projection = '3d')
-
-ax.plot(d.time_EMG[:Nphase] * 1000, np.arange(Npulses), phase[nervenum, stimrep, :, :].T)
-
-# <codecell>
-
 plt.plot(# d.time_EMG[:Nphase] * 1000,
          np.std(phase[nervenum, stimrep, :, :], axis = 0))
 plt.xlim(xmax = Nphase)
@@ -710,8 +1070,8 @@ plt.show()
 
 # <codecell>
 
-nervenum = 3
-stimrep = 20
+nervenum = 1
+stimrep = 5
 
 plt.imshow(log_square(phase[nervenum, stimrep, :, :]), origin = 'upper', aspect = 'auto')
 
@@ -725,9 +1085,16 @@ plt.colorbar()
 
 # <codecell>
 
+nervenum = 0
+stimrep = 5
+
+# <codecell>
+
 import matplotlib.mlab as mlab
 
-Pac, freq, time = mlab.specgram(cleaned_EMG[3, 10, :], NFFT = Nsamples_segment, Fs = d.fs_EMG, noverlap = 0, 
+Pac, freq, time = mlab.specgram(cleaned_EMG[nervenum, stimrep, :], 
+                                NFFT = 2 * Nsamples_segment, noverlap = 0,
+                                Fs = d.fs_EMG,
                                 pad_to = 16 * Nsamples_segment)
 
 # <codecell>

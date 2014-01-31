@@ -472,6 +472,133 @@ webframe("http://jneubaue.bol.ucla.edu/publications/JAS01401.pdf#page=4", width 
 
 # <markdowncell>
 
+# Cluster analysis
+# ==================
+
+# <codecell>
+
+from sklearn.cluster import DBSCAN
+from sklearn import metrics
+from sklearn.preprocessing im(port StandardScaler
+
+# <codecell>
+
+allF0_masked = np.ma.masked_array(all_F0, mask = np.isnan(all_F0))
+alllstrain_masked = np.ma.masked_array(all_lstrain, mask = np.isnan(all_lstrain))
+allrstrain_masked = np.ma.masked_array(all_rstrain, mask = np.isnan(all_rstrain))
+
+alldVP_masked = np.ma.masked_array(all_dVP, mask = np.isnan(all_dVP))
+
+allps_masked = np.ma.masked_array(all_ps, mask = np.isnan(all_ps))
+allQ_masked = np.ma.masked_array(all_Q, mask = np.isnan(all_Q))
+
+# <codecell>
+
+SLNmasked = np.ma.masked_array(all_SLNlevels, mask = np.isnan(all_F0))
+TAmasked = np.ma.masked_array(all_TAlevels, mask = np.isnan(all_F0))
+trunkRLNmasked = np.ma.masked_array(all_trunkRLNlevels, mask = np.isnan(all_F0))
+
+# <codecell>
+
+print allF0_masked.shape
+print allF0_masked.compressed().shape
+
+# <codecell>
+
+F0ofstrain = np.vstack((alllstrain_masked.compressed(), allF0_masked.compressed())).T
+
+# <codecell>
+
+variables = np.vstack((alllstrain_masked.compressed(), 
+                       alldVP_masked.compressed(),
+                       # allps_masked.compressed(), 
+                       # allQ_masked.compressed(),
+                       allF0_masked.compressed())).T
+
+# <codecell>
+
+F0ofstimulation = np.vstack((SLNmasked.compressed(), TAmasked.compressed(), trunkRLNmasked.compressed(),
+                             allF0_masked.compressed())).T
+
+# <codecell>
+
+F0ofstrainscaled = StandardScaler().fit_transform(F0ofstrain)
+
+# <codecell>
+
+F0ofstimulationscaled = StandardScaler().fit_transform(F0ofstimulation)
+
+# <codecell>
+
+variablesscaled = StandardScaler().fit_transform(variables)
+
+# <codecell>
+
+db = DBSCAN(eps = 0.4, min_samples = 10).fit(F0ofstrainscaled)
+
+# <codecell>
+
+db = DBSCAN(eps = 0.1, min_samples = 10).fit(F0ofstimulationscaled)
+
+# <codecell>
+
+db = DBSCAN(eps = 0.4, min_samples = 10).fit(variablesscaled)
+
+# <codecell>
+
+core_samples = db.core_sample_indices_
+labels = db.labels_
+
+n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+
+# <codecell>
+
+n_clusters_
+
+# <codecell>
+
+plt.close('all')
+
+X = variables[:, [1, 2]]
+
+unique_labels = set(labels)
+colors = plt.cm.Spectral(np.linspace(0, 1, len(unique_labels)))
+
+for k, col in zip(unique_labels, colors):
+    if k == -1:
+        # Black used for noise.
+        col = 'k'
+        markersize = 6
+        markeredgecolor = 'None'
+        
+    class_members = [index[0] for index in np.argwhere(labels == k)]
+    cluster_core_samples = [index for index in core_samples
+                            if labels[index] == k]
+    for index in class_members:
+        x = X[index]
+        if index in core_samples and k != -1:
+            markersize = 14
+            markeredgecolor = 'r'
+        else:
+            if k == -1:
+                markersize = 6
+                markeredgecolor = 'None'
+            else:
+                markersize = 8
+                markeredgecolor = 'k'
+                
+        plt.plot(x[0], x[1], 'o', 
+                 markerfacecolor = col,
+                 markeredgecolor = markeredgecolor, # 'k', 
+                 markersize = markersize)
+
+plt.title('Estimated number of clusters: %d' % n_clusters_)
+
+plt.savefig('clusteredF0-Dvp.pdf', dpi = 100, orientation = 'landscape', bbox_inches = 'tight')
+plt.show()
+
+# <markdowncell>
+
 # Scatter plots
 # ==============
 # 
