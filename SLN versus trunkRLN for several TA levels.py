@@ -141,8 +141,37 @@ ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 # <codecell>
 
+with open('/home/neubauer/.neurousername', 'r') as f:
+    username = f.read()
+
+if not username:
+    print "no username"
+    username = None
+else:
+    print 'username: ', username
+    
+with open('/home/neubauer/.neuropassword', 'r') as f:
+    password = f.read()
+    
+if not password:
+    print "no password"
+    print
+    
+    try:
+        password = raw_input("Enter password for users '%s': " % username)
+    except:
+        print "some problem occurred"
+        print sys.exc_info()
+        password = None
+    else:
+        print "got a password"
+else:
+    print "got a password"
+
+# <codecell>
+
 neuromuscular = '10.47.85.12'
-ssh_client.connect(neuromuscular, username = 'neubauer', password = "Qy72:<>z", compress = True)
+ssh_client.connect(neuromuscular, username = username, password = password, compress = True)
 
 # <codecell>
 
