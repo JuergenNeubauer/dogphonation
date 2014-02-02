@@ -127,6 +127,7 @@ for casename in recurrens_book.sheet_names():
     T_list = []     # period of four cycles in samples
     
     for rownum in range(Nstimulation):
+        # start in row 4 to discard the header information (rows 0 to 3)
         onset, dummy, Npeaks, T = sheet.row_values(rownum + 4, start_colx = 1, end_colx = 5)
         
         if Npeaks != 4:
@@ -232,7 +233,10 @@ isoampgain_Q = 2.0
 num_leftSLN = 0
 num_rightRLN = 3
 
+##########################################################################
+
 for casename in implant_recurrens:
+    
     hdf5dirname = os.path.join(basedir, implant_recurrens[casename]['hdf5datadir'])
     if not os.path.isdir(hdf5dirname):
         continue
@@ -300,8 +304,10 @@ print min_ps_onset, max_ps_onset
 
 # <codecell>
 
-num_leftSLN = 0
-num_rightRLN = 3
+# make spectrogram arrays with the measured onset time and onset frequency indicated by horizontal and vertical lines
+
+# num_leftSLN = 0
+# num_rightRLN = 3
 
 try:
     del d.allspecs
@@ -365,8 +371,8 @@ for casename in implant_recurrens:
                             nerve_xaxis = grid_xaxis, nerve_yaxis = grid_yaxis,
                             figsize = (2*24/3, 2*18/3))
 
-        for gind, (stind, x, y) in enumerate(zip(stimind, gridx, gridy)):
-            # print gind, stind+1, x, y, d.allspecs.grid[x, y].xind, d.allspecs.grid[x, y].yind, otime[gind] * 1000 * 50
+        for gind, (x, y) in enumerate(zip(gridx, gridy)):
+            # print gind, x, y, d.allspecs.grid[x, y].xind, d.allspecs.grid[x, y].yind, otime[gind] * 1000 * 50
             
             d.allspecs.grid[x, y].axvline(x = otime[gind], lw = 1.5, ls = '--', color = 'black')
             d.allspecs.grid[x, y].axhline(y = F0[gind], lw = 1.5, ls = '--', color = 'black')
@@ -383,15 +389,6 @@ for casename in implant_recurrens:
 # <codecell>
 
 help dogdata.DogData.show_spectrograms
-
-# <codecell>
-
-for gind, (stind, x, y) in enumerate(zip(stimind, gridx, gridy)):
-    print gind, stind+1, x, y, otime[gind] * 1000 * 50
-
-# <codecell>
-
-zip(stimind+1, gridx, gridy, otime * 1000 * 50)
 
 # <codecell>
 
@@ -481,8 +478,10 @@ import subplotgrid
 
 # <codecell>
 
-num_leftSLN = 0
-num_rightRLN = 3
+# make amplitude plot arrays with the measured onset time and onset period indicated with a green range
+
+# num_leftSLN = 0
+# num_rightRLN = 3
 
 try:
     del d.allspecs
