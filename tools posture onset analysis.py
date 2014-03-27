@@ -50,6 +50,11 @@ def get_onsettime_samples(workbook = None, number_of_stimulations = None):
             onset, dummy, Npeaks, T = sheet.row_values(rownum + 4, start_colx = 1, end_colx = 5)
         
             if Npeaks != 4:
+                print "casename: ", casename
+                print "rownum: ", rownum
+                print "onset, dummy, Npeaks, T: ", onset, dummy, Npeaks, T
+                print
+                sys.stdout.flush()
                 raise ValueError("Npeaks is NOT 4")
         
             try:
@@ -121,4 +126,25 @@ def write_inputdata_file(filename = None, nerve_conditions = None, onsettime_sam
         csv_writer.writerow([filenum] + list(row))
         
     outfile.close()
+
+# <codecell>
+
+def datetimestamp(cinefilename):
+    """
+    extract the date-time-stamp from the cine file name
+    
+    can be used to properly sort cine file names which have the following naming convention:
+    
+    right SLN versus right RLN No implant_000_Wed Oct 23 2013 16 39 43.773 273.001.cine
+    right SLN versus right RLN No implant_999_Wed Oct 23 2013 16 39 38.776 185.001.cine
+    """
+
+    fname = os.path.basename(filename)
+
+    cleanf = os.path.splitext(fname)[0]
+
+    # all our experiments are on Wednesdays!!!
+    datestring, usec, nsec = cleanf.split('Wed')[-1].strip().split('.')
+
+    return time.strptime(datestring, '%b %d %Y %H %M %S')
 

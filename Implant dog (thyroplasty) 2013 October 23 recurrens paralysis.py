@@ -1,6 +1,44 @@
 # -*- coding: utf-8 -*-
 # <nbformat>3.0</nbformat>
 
+# <rawcell>
+
+# <style>
+# div.cell, div.text_cell_render{
+#   max-width:950px;
+#   margin-left:auto;
+#   margin-right:auto;
+# }
+# 
+# .rendered_html
+# {
+#   font-size: 140%;
+#   }
+# 
+# .rendered_html li
+# {
+#   line-height: 1.8;
+#   }
+# 
+# .rendered_html h1, h2 {
+#   text-align:center;
+#   font-familly:"Charis SIL", serif;
+# }
+# </style>
+
+# <codecell>
+
+%matplotlib inline
+
+%config InlineBackend
+%config InlineBackend.close_figures = False
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+print mpl.is_interactive()
+print plt.isinteractive()
+
 # <codecell>
 
 import sys, os, xlrd, glob
@@ -20,11 +58,13 @@ xls_dir = './Implant_2013_10_23/'
 
 # <codecell>
 
-!ls -alot $xls_dir
+!ls -alot $xls_dir/*.xls*
 
 # <codecell>
 
 recurrens_book = xlrd.open_workbook(filename = os.path.join(xls_dir, '10.23.SLNvsRLN.ImplantsRepeated.xls'))
+
+# oldbook = xlrd.open_workbook(filename = os.path.join(xls_dir, 'REVISED.SLNvsRLN.Implants.xlsx'))
 
 # <codecell>
 
@@ -34,11 +74,7 @@ recurrens_book.sheet_names()
 
 implant_recurrens = {str(item): None for item in recurrens_book.sheet_names()}
 
-# <codecell>
-
 basedir = "/extra/InVivoDog/InVivoDog_2013_10_23/data LabView"
-
-# <codecell>
 
 implant_recurrens['Baseline'] = dict(hdf5datadir = "SLN versus RLN/No implant on left side")
 implant_recurrens['No Implant (No L RLN)'] = dict(hdf5datadir = "SLN versus RLN, no left RLN/No implant on left side")
@@ -65,54 +101,9 @@ for key, value in implant_recurrens.items():
 
 # <codecell>
 
-!ls -alo $xls_dir
-
-# <codecell>
-
-vagal_book = xlrd.open_workbook(filename = os.path.join(xls_dir, '10.23.RSLNvsRRLN.ImplantsRepeated.xls'))
-
-# <codecell>
-
-vagal_book.sheet_names()
-
-# <codecell>
-
-implant_vagal = {str(item): None for item in vagal_book.sheet_names()}
-
-# <codecell>
-
-implant_vagal['No Implant'] = dict(hdf5datadir = "right SLN versus right RLN/No implant")
-implant_vagal['Rectangle'] = dict(hdf5datadir = "right SLN versus right RLN/Rectangular implant")
-implant_vagal['Divergent'] = dict(hdf5datadir = "right SLN versus right RLN/Divergent implant")
-implant_vagal['Convergent'] = dict(hdf5datadir = "right SLN versus right RLN/Convergent implant")
-implant_vagal['V-Shaped'] = dict(hdf5datadir = "right SLN versus right RLN/V-shaped implant")
-implant_vagal['ELRectangle'] = dict(hdf5datadir = "right SLN versus right RLN/Long rectangular implant")
-implant_vagal['ELDivergent'] = dict(hdf5datadir = "right SLN versus right RLN/Long divergent implant")
-implant_vagal['ELConvergent'] = dict(hdf5datadir = "right SLN versus right RLN/Long convergent implant")
-implant_vagal['ELV-shaped'] = dict(hdf5datadir = "right SLN versus right RLN/Long V-shaped implant")
-
-# <codecell>
-
-for key, value in implant_vagal.items():
-    print (key, 
-           os.path.isdir(os.path.join(basedir, value['hdf5datadir'])), 
-           len(glob.glob(os.path.join(basedir, value['hdf5datadir'], '*.hdf5'))))
-
-# <codecell>
-
-!ls -alo "../InVivoDog_2013_10_23/data LabView/right SLN versus right RLN"
-
-# <codecell>
-
 for casename in recurrens_book.sheet_names():
     sheet = recurrens_book.sheet_by_name(casename)
     print sheet.number, sheet.name, sheet.nrows, sheet.ncols, implant_recurrens[casename]
-
-# <codecell>
-
-for casename in vagal_book.sheet_names():
-    sheet = vagal_book.sheet_by_name(casename)
-    print sheet.number, sheet.name, sheet.nrows, sheet.ncols, implant_vagal[casename]
 
 # <codecell>
 
@@ -140,7 +131,7 @@ for casename in recurrens_book.sheet_names():
             onset_list.append(int(onset))
             
         try:
-            if T.strip() in ['']:
+            if T.strip().lower() in ['', 'np']:
                 T_list.append(np.nan)
         except:
             T_list.append(int(T))
@@ -155,59 +146,6 @@ for casename in recurrens_book.sheet_names():
 
 # <codecell>
 
-for casename in vagal_book.sheet_names():
-    sheet = vagal_book.sheet_by_name(casename)
-    
-    onset_list = [] # onset time in samples (sampling rate: 50 KHz)
-    T_list = []     # period of four cycles in samples
-    
-    for rownum in range(Nstimulation):
-        onset, dummy, Npeaks, T = sheet.row_values(rownum + 4, start_colx = 1, end_colx = 5)
-        
-        if Npeaks != 4:
-            raise ValueError("Npeaks is NOT 4")
-        
-        try:
-            if onset.strip().lower() in ['np', '']:
-                onset_list.append(np.nan)
-        except:
-            onset_list.append(int(onset))
-            
-        try:
-            if T.strip() in ['']:
-                T_list.append(np.nan)
-        except:
-            T_list.append(int(T))
-            
-    onsettime_ms = np.array(onset_list) / 50.
-    F0 = 50.0 * 4.0 / np.array(T_list) * 1000
-    
-    implant_vagal[casename].update(onsettime_ms = onsettime_ms, F0 = F0)
-
-# <codecell>
-
-%matplotlib inline
-
-# <codecell>
-
-%config InlineBackend
-
-# <codecell>
-
-%config InlineBackend.close_figures = False
-
-# <codecell>
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# <codecell>
-
-print mpl.is_interactive()
-print plt.isinteractive()
-
-# <codecell>
-
 min_F0 = np.min([np.nanmin(implant_recurrens[casename]['F0']) for casename in implant_recurrens])
 max_F0 = np.max([np.nanmax(implant_recurrens[casename]['F0']) for casename in implant_recurrens])
 
@@ -217,11 +155,15 @@ print min_F0, max_F0
 
 # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
     
-Voffset_ps = -38.0e-3 # depends on the date
+Voffset_ps = -32.3e-3 # -38.0e-3 # depends on the date
 isoampgain_ps = 2.0 # I measured it more accurately, it is slightly more than 2
     
-Voffset_Q = 33.0e-3 # depends on the date
+Voffset_Q = 23.8e-3 # 33.0e-3 # depends on the date
 isoampgain_Q = 2.0
+
+# <codecell>
+
+%run -i 'tools for implant analysis.py'
 
 # <codecell>
 
@@ -233,67 +175,70 @@ isoampgain_Q = 2.0
 num_leftSLN = 0
 num_rightRLN = 3
 
-##########################################################################
+relative_nerve_levels = [('SLN', num_leftSLN), 
+                         ('rightRLN', num_rightRLN)]
 
-for casename in implant_recurrens:
-    
-    hdf5dirname = os.path.join(basedir, implant_recurrens[casename]['hdf5datadir'])
-    if not os.path.isdir(hdf5dirname):
-        continue
+min_ps, min_Q = getonsetdata(basedir, implant_recurrens, relative_nerve_levels)
 
-    hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
-    if len(hdf5filename) > 1:
-        continue
-    else:
-        hdf5filename = hdf5filename[0]
-        
-    print casename
-    
-    d = dogdata.DogData(datadir = hdf5dirname, datafile = os.path.basename(hdf5filename))
+# <codecell>
 
-    d.get_all_data()
-    
-    # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
-    Vconv = d.convEMG # EMG conversion is just conversion from numbers to Volts
-    
-    d.allps = isoampgain_ps * d.allps - Voffset_ps / Vconv * d.convps
-    
-    d.allQ = isoampgain_Q * d.allQ - Voffset_Q / Vconv * d.convQ
-    
-    F0 = np.ones((d.Nlevels, d.Nlevels)) * np.nan
-    onsettime_ms = np.ones_like(F0) * np.nan
-    ps_onset = np.ones_like(F0) * np.nan
-    leftSLN = np.ones_like(F0) * np.nan
-    rightRLN = np.ones_like(F0) * np.nan
-    stimind = np.ones_like(F0) * np.nan
+implant_recurrens
 
-    for stimnum, (SLNlevel, rightRLNlevel) in enumerate(d.a_rellevels[:, [num_leftSLN, num_rightRLN]]):
-        nerve_xaxis = rightRLNlevel
-        nerve_yaxis = SLNlevel
-        
-        stimind[nerve_yaxis, nerve_xaxis] = stimnum
-        leftSLN[nerve_yaxis, nerve_xaxis] = SLNlevel
-        rightRLN[nerve_yaxis, nerve_xaxis] = rightRLNlevel
-        
-        onsettime_ms[nerve_yaxis, nerve_xaxis] = implant_recurrens[casename]['onsettime_ms'][stimnum]
-        F0[nerve_yaxis, nerve_xaxis] = implant_recurrens[casename]['F0'][stimnum]
-        
-        ps_onset[nerve_yaxis, nerve_xaxis] = np.interp(onsettime_ms[nerve_yaxis, nerve_xaxis] / 1000., 
-                                                       d.time_psQ, d.allps[stimnum, :],
-                                                       left = np.nan, right = np.nan)
-    implant_recurrens[casename]['leftSLN'] = leftSLN
-    implant_recurrens[casename]['rightRLN'] = rightRLN
-    implant_recurrens[casename]['stimind'] = stimind
+# <codecell>
+
+print "minima before correction"
+print "min_ps: ", min_ps
+print "min_Q: ", min_Q
+
+# <codecell>
+
+casename = 'No Implant (No L RLN)'
+casename = 'Baseline'
+
+hdf5dirname = os.path.join(basedir, implant_recurrens[casename]['hdf5datadir'])
+hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
+
+# take the latest if many
+hdf5filename = sorted(hdf5filename)[-1]
     
-    implant_recurrens[casename]['F0'] = F0
-    implant_recurrens[casename]['onsettime_ms'] = onsettime_ms
-    implant_recurrens[casename]['ps_onset'] = ps_onset
+print casename
+print os.path.basename(hdf5filename)
+
+d = dogdata.DogData(datadir = hdf5dirname, datafile = os.path.basename(hdf5filename))
+d.get_all_data()
+
+Vconv = d.convEMG
 
 # <codecell>
 
 # the maximum flow rate should be around 1700 ml/s, otherwise the iso-stim gain is wrong
 print casename
-print np.min(d.allQ), np.max(d.allQ)
+
+print 'before correction'
+print "min_Q: {}, max_Q: {}".format(np.min(d.allQ), np.max(d.allQ))
+print "min_ps: {}, max_ps: {}".format(np.min(d.allps), np.max(d.allps))
+
+print 
+
+print "total offset Q: {} Volts".format( np.min(d.allQ) / d.convQ * Vconv )
+
+print "total offset ps: {} Volts".format( np.min(d.allps) / d.convps * Vconv )
+
+# <codecell>
+
+np.unravel_index(np.argmin(d.allps), d.allps.shape)
+
+# <codecell>
+
+plt.close('all')
+plt.plot(d.allps[: , 1:10] * 1) # / d.convps * Vconv)
+
+# <codecell>
+
+plt.close('all')
+plt.imshow(d.allps, aspect = 4)
+
+plt.colorbar(orientation = 'horizontal')
 
 # <codecell>
 
@@ -301,6 +246,13 @@ min_ps_onset = np.min([np.nanmin(implant_recurrens[casename]['ps_onset']) for ca
 max_ps_onset = np.max([np.nanmax(implant_recurrens[casename]['ps_onset']) for casename in implant_recurrens])
 
 print min_ps_onset, max_ps_onset
+
+# <codecell>
+
+min_Q_onset = np.min([np.nanmin(implant_recurrens[casename]['Q_onset']) for casename in implant_recurrens])
+max_Q_onset = np.max([np.nanmax(implant_recurrens[casename]['Q_onset']) for casename in implant_recurrens])
+
+print min_Q_onset, max_Q_onset
 
 # <codecell>
 
@@ -323,7 +275,11 @@ for casename in implant_recurrens:
 
     hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
     if len(hdf5filename) > 1:
-        continue
+        print "more than one hdf5 file"
+        print hdf5filename
+        print "use latest"
+        hdf5filename = sorted(hdf5filename)[-1]
+        print hdf5filename
     else:
         hdf5filename = hdf5filename[0]
         
@@ -333,12 +289,7 @@ for casename in implant_recurrens:
 
     d.get_all_data()
     
-    # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
-    Vconv = d.convEMG # EMG conversion is just conversion from numbers to Volts
-    
-    d.allps = isoampgain_ps * d.allps - Voffset_ps / Vconv * d.convps
-    
-    d.allQ = isoampgain_Q * d.allQ - Voffset_Q / Vconv * d.convQ
+    isoamp_adjustment(d)
 
     hdf5file = os.path.basename(hdf5filename)
     
@@ -396,47 +347,8 @@ implant_recurrens[casename].keys()
 
 # <codecell>
 
-for casename in implant_recurrens:
-    F0 = implant_recurrens[casename]['F0']
-    
-    try:
-        plt.clf()
-    except:
-        pass
-    
-    plt.imshow(F0)
-    
-    plt.xlabel('right RLN')
-    plt.ylabel('SLN')
-    
-    plt.clim(vmin = min_F0, vmax = max_F0)
-    
-    plt.title("recurrent nerve paralysis: %s" % casename)
-    
-    cb = plt.colorbar()
-    cb.set_label('frequency [Hz]')
-    
-    plt.savefig("recurrent_nerve_paralysis.F0.%s.pdf" % casename, 
-                orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
-    
-    ps_onset = implant_recurrens[casename]['ps_onset']
-    
-    plt.clf()
-    
-    plt.imshow(ps_onset)
-    
-    plt.xlabel('right RLN')
-    plt.ylabel('SLN')
-    
-    # plt.clim(vmin = min_ps_onset, vmax = max_ps_onset)
-    
-    plt.title("recurrent nerve paralysis: %s" % casename)
-    
-    cb = plt.colorbar()
-    cb.set_label('ps [Pa]')
-    
-    plt.savefig("recurrent_nerve_paralysis.Ps.%s.pdf" % casename,
-                orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
+plotonsetdata(implant_recurrens, name_paralysis = 'recurrent nerve paralysis', 
+              ps_normalized = True, Q_normalized = True)
 
 # <codecell>
 
@@ -496,7 +408,11 @@ for casename in implant_recurrens:
 
     hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
     if len(hdf5filename) > 1:
-        continue
+        print "found more than on hdf5 file"
+        print hdf5filename
+        print "use latest"
+        hdf5filename = sorted(hdf5filename)[-1]
+        print hdf5filename
     else:
         hdf5filename = hdf5filename[0]
         
@@ -506,12 +422,7 @@ for casename in implant_recurrens:
 
     d.get_all_data()
     
-    # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
-    Vconv = d.convEMG # EMG conversion is just conversion from numbers to Volts
-    
-    d.allps = isoampgain_ps * d.allps - Voffset_ps / Vconv * d.convps
-    
-    d.allQ = isoampgain_Q * d.allQ - Voffset_Q / Vconv * d.convQ
+    isoamp_adjustment(d)
 
     hdf5file = os.path.basename(hdf5filename)
     
@@ -601,6 +512,443 @@ plt.ylim(ymin = np.nanmin(plotvalues) * 1.1,
          ymax = np.nanmax(plotvalues) * 1.1)
 
 plt.xlim(xmin = otime[ind] - 15 * periodT[ind], xmax = otime[ind] + 15 * periodT[ind])
+
+# <codecell>
+
+implant_recurrens
+
+# <codecell>
+
+exportdata2csv(implant_recurrens, filename = 'recurrens_paralysis_2013_10_23')
+
+# <codecell>
+
+casename = 'Baseline'
+
+implant_recurrens[casename].keys()
+
+# <codecell>
+
+casenames = ['Baseline', 'No Implant (No L RLN)',
+             'Rectangle', 'Convergent', 'Divergent', 'V-Shaped',
+             'ELRectangle', 'ELConvergent', 'ELDivergent', 'ELV-shaped']
+
+# <codecell>
+
+Bernoulli_Power(implant_recurrens)
+
+# <codecell>
+
+for varname in varnames:
+    statistics(implant_recurrens, varname = varname)
+
+# <codecell>
+
+%run -i 'tools for implant analysis.py'
+
+# <codecell>
+
+for varname, label in zip(varnames, varlabels):
+    plot_boxplot(implant_recurrens, casenames, varname = varname, label = label, 
+                 title = 'recurrent nerve paralysis')
+
+# <codecell>
+
+for varname, label in zip(varnames, varlabels):
+    plot_statistics(casenames, varname = varname, label = label)
+
+# <codecell>
+
+scatterplot(implant_recurrens, casenames, title = 'recurrens')
+
+# <codecell>
+
+casenames
+
+# <codecell>
+
+import pickle
+
+with open('vagal_paralysis_2013_10_23.pkl', 'rb') as f:
+    implant_vagal = pickle.load(f)
+
+# <codecell>
+
+implant_vagal.keys
+
+# <codecell>
+
+implant_vagal['No Implant']['onsettime_ms']
+
+# <codecell>
+
+cases = ['Baseline', 'No Implant (No L RLN)', 'Convergent', 'ELConvergent',
+         'Baseline', 'No Implant', 'Convergent', 'ELConvergent']
+
+labels = 2 * ['Baseline', 'No Implant', 'Convergent', 'Long Convergent']
+
+paralysistype = 4 * ['recurrens'] + ['recurrens'] + 3 * ['vagal']
+
+markers = 2 * ['o', '*', '^', '>'] # , '^', '<', '>', 'D', 'p', 'h', '8']
+# markers = ['o'] * 12
+
+minF0, maxF0 = np.infty, -np.infty
+minps, maxps = np.infty, -np.infty
+minQ, maxQ = np.infty, -np.infty
+
+for (casename, paralysis) in zip(cases, paralysistype):
+    if 'recurrens' in paralysis:
+        implant = implant_recurrens
+    if 'vagal' in paralysis:
+        implant = implant_vagal
+        
+    # sometimes phonation was determined after stimulation had stopped
+    # this sound is due to switching off the stimulation and the flow ramp
+    phonation = implant[casename]['onsettime_ms'] < 1500
+
+    minF0 = min(minF0, np.nanmin(implant[casename]['F0'][phonation]))
+    maxF0 = max(maxF0, np.nanmax(implant[casename]['F0'][phonation]))
+    minps = min(minps, np.nanmin(implant[casename]['ps_onset'][phonation]))
+    maxps = max(maxps, np.nanmax(implant[casename]['ps_onset'][phonation]))
+    minQ = min(minQ, np.nanmin(implant[casename]['Q_onset'][phonation]))
+    maxQ = max(maxQ, np.nanmax(implant[casename]['Q_onset'][phonation]))
+
+# allF0 = np.array([implant_recurrens[casename]['F0'].ravel() for casename in cases]).ravel()
+# allA = np.array([implant_recurrens[casename]['A_onset'].ravel() for casename in cases]).ravel()
+# allP = np.array([implant_recurrens[casename]['P_onset'].ravel() for casename in cases]).ravel()
+
+# allps = np.array([implant_recurrens[casename]['ps_onset'].ravel() for casename in cases]).ravel()
+# allQ = np.array([implant_recurrens[casename]['Q_onset'].ravel() for casename in cases]).ravel()
+
+plt.close('all')
+plt.figure(figsize = (20, 15))
+
+a1 = plt.subplot(2, 1, 1)
+a2 = plt.subplot(2, 1, 2)
+
+# a3 = plt.subplot(2, 2, 3)
+# a4 = plt.subplot(2, 2, 4)
+
+for caseind, (casename, paralysis) in enumerate(zip(cases, paralysistype)):
+    if 'recurrens' in paralysis:
+        implant = implant_recurrens
+    if 'vagal' in paralysis:
+        implant = implant_vagal
+    
+    # A = implant[casename]['A_onset'].ravel()
+    # P = implant[casename]['P_onset'].ravel()
+    
+    # sometimes phonation was determined after stimulation had stopped
+    # this sound is due to switching off the stimulation and the flow ramp
+    phonation = implant[casename]['onsettime_ms'] < 1500
+
+    Q = implant[casename]['Q_onset'][phonation].ravel()
+    ps = implant[casename]['ps_onset'][phonation].ravel()
+    F0 = implant[casename]['F0'][phonation].ravel()
+    
+    # plt.plot(implant_recurrens[casename]['ps_onset'].ravel(), 
+    #             implant_recurrens[casename]['Q_onset'].ravel(), 'o', 
+    #          label = casename)
+    
+    # plt.plot(implant_recurrens[casename]['F0'].ravel(), A.ravel(), 'o', label = casename, mec = 'None')
+    
+    if caseind < 4: # 2:
+        ax = a1
+        axlabel = 'A'
+    elif caseind < 8: # 4:
+        ax = a2
+        axlabel = 'B'
+    elif caseind < 6:
+        ax = a3
+        axlabel = 'C'
+    else:
+        ax = a4
+        axlabel = 'D'
+            
+    if caseind % 4 == 0:
+        color = 'red'
+    elif caseind % 4 == 1:
+        color = 'green'
+    elif caseind % 4 == 2:
+        color = 'blue'
+    elif caseind % 4 == 3:
+        color = 'black'
+            
+    scatter = ax.scatter(# A, P, 
+                ps, Q,
+                # s = F0 * 5,
+                s = 200,
+                c = color, # F0,
+                # vmin = minF0, vmax = maxF0,
+                edgecolors = 'none',
+                # linewidths = linewidths,
+                marker = markers[caseind],
+                label = labels[caseind],
+                alpha = 0.7)
+    
+    no_nans = ~np.isnan(ps)
+    psdata = ps[no_nans]
+    Qdata = Q[no_nans]
+    
+    a = np.vstack([psdata, np.ones_like(psdata)]).T
+    m, c = np.linalg.lstsq(a, Qdata)[0]
+    
+    ax.plot(ps, m * ps + c, '-', color = color, lw = 5, zorder = 1000)
+    
+    if False:
+        if caseind == 7:
+            cb = plt.colorbar(scatter, ax = [a1, a2, a3, a4])
+            cb.set_label('onset F0 [Hz]')
+        
+    if caseind in [0, 1, 2, 3]:
+        ax.set_xticklabels([])
+    if caseind in [2, 3, 6, 7]:
+        # ax.set_yticklabels([])
+        pass
+        
+    if caseind in [4, 5, 6, 7]:
+        # ax.set_xticks(range(400, 2000, 400))
+        pass
+
+    if caseind in [1, 3]:
+        ax.set_title('Recurrent nerve paralysis')
+    if caseind in [5, 7]:
+        ax.set_title('Vagal nerve paralysis')
+        
+    if caseind in [1, 3, 5, 7]:
+        ax.text(-0.1, 1.0, axlabel, transform = ax.transAxes, fontsize = 40, 
+                # bbox = dict(facecolor = 'red', alpha = 1)
+                )
+        
+    if caseind in [4, 6]:
+        ax.set_xlabel('onset ps [Pa]')
+        # plt.xlabel('onset Bernoulli area [a. u.]')
+    if caseind in [0, 4]:
+        ax.set_ylabel('onset Q [ml/s]')
+        # plt.ylabel('onset aerodynamic power [W]')
+        
+    ax.set_xlim(xmin = 0.95 * minps, xmax = 1.05 * maxps)
+    ax.set_ylim(ymin = 0.95 * minQ, ymax = 1.05 * maxQ)
+
+    # plt.gray()
+
+    if caseind in [0, 1, 2, 3]:
+        location = 'upper left'
+    if caseind in [4, 5, 6, 7]:
+        location = 'upper right'
+            
+    # location = 'best'
+            
+    ax.legend(loc = location, # (0, -0.15), 
+              scatterpoints = 1, numpoints = 1, 
+              framealpha = 1.0,
+              fontsize = 'medium',
+              labelspacing = 0.15 # default: 0.5
+               # mode = 'expand', 
+               # ncol = 2
+               )
+
+figname = 'Implants_Figure2.pdf'
+# figname = '{}.power-area-F0.{}.pdf'.format(title, casename)
+plt.savefig(figname, orientation = 'landscape', bbox_inches = 'tight')
+
+# <codecell>
+
+# landmarks at rest and onset clicked by Eli
+# if onset didn't occur, used the last frame in recording
+# see strainanalysis.py
+landmarkdir = "/extra/InVivoDog/Elazar/results/10_23_2013_implant_SLNvsRLN/"
+
+print "%s exists? " % landmarkdir, os.path.isdir(landmarkdir)
+
+clickfiles = sorted(glob.glob(os.path.join(landmarkdir, '*.npz')))
+
+print "found N clickfiles: ", len(clickfiles)
+
+# <codecell>
+
+print implant_recurrens.keys()
+print 'number of cases: ', len(implant_recurrens.keys())
+
+# <codecell>
+
+len(clickfiles) / Nstimulation
+
+# <codecell>
+
+# from posture_onset.implant_SLNvsRLN_2013_10_23.py
+
+TAconditions = ["No Implant (No L RLN)", "Rectangle", "Convergent", "Divergent", "V-Shaped",
+                         "ELRectangle", "ELConvergent", "ELDivergent", "ELV-shaped"]
+
+cinecasename = "InVivoDog_2013_10_23/SLN versus RLN, no left RLN"
+
+videosTAconditions = ["No implant on left side", "Rectangular implant on left side", "Convergent implant on left side",
+                                  "Divergent implant on left side", "V-shaped implant on left side",
+                                  "Long rectangular implant on left side", "Long convergent implant on left side",
+                                  "Long divergent implant on left side", "Long V-shaped implant left"]
+
+datasavedir = "./results/10_23_2013_implant_SLNvsRLN"
+
+# <codecell>
+
+set.symmetric_difference(set(TAconditions), set(implant_recurrens.keys()))
+
+# <codecell>
+
+with open(clickfiles[0], 'rb') as f:
+    clickdat = np.load(f)
+os.path.basename(clickfiles[0])
+
+# <codecell>
+
+clickdat.items
+
+# <codecell>
+
+%run -i 'tools for implant analysis.py'
+
+# <codecell>
+
+datetimestamp(clickfiles[0], debug = False)
+
+# <codecell>
+
+stimlevelindex = dict()
+onsetframenumber = dict()
+baseline_pos = dict()
+onset_pos = dict()
+
+for casename in implant_recurrens:
+
+    print 'casename: ', casename
+    print 'hdf5datadir: ', implant_recurrens[casename]['hdf5datadir']
+    casedescription = implant_recurrens[casename]['hdf5datadir'].replace('/', ' ')
+    print 'casedescription: ', casedescription
+    
+    case_clickfiles = [item for item in clickfiles if casedescription in os.path.basename(item)]
+    case_clickfiles = sorted(case_clickfiles, key = datetimestamp)
+    
+    try:
+        # testing the missing case
+        case_clickfiles.pop(1)
+        case_clickfiles.pop(3)
+    except:
+        pass
+    
+    if not case_clickfiles:
+        print "ERROR:\tno clickfiles found"
+        print
+        continue
+    
+    # this number comes from the numbering of the cine files
+    # this numbering wraps over at 999, to be followed by 000, so ordering by date is necessary
+    clickfilenumber = np.array([int(os.path.basename(item).split('_')[1]) for item in case_clickfiles])
+    
+    inc = np.diff(clickfilenumber)
+    
+    if np.all(inc == 1):
+        print "OK: complete sequence of clickfiles found"
+    if np.any(inc < 0):
+        print "CAUTION:\tclickfile sequence wrapped over"
+    if np.any(inc > 1):
+        print "ALERT:\t\tat least one clickfile is missing"
+        missingfileindices = 1 + np.argwhere(inc > 1).squeeze()
+        print 'missing at index: ', missingfileindices
+        for ind in missingfileindices:
+            case_clickfiles.insert(ind, None)
+    
+    stimlevelindex[casename] = []
+    onsetframenumber[casename] = []
+    baseline_pos[casename] = []
+    onset_pos[casename] = []
+    
+    list_strains = []
+    list_d_rel = []
+    list_stimcoord = []
+    
+    for itemnum, item in enumerate(case_clickfiles):
+        if not item:
+            stimlevelindex[casename].append(None)
+            onsetframenumber[casename].append(None)
+            
+            baseline_pos[casename].append(None)
+            onset_pos[casename].append(None)
+            
+            continue
+            
+        with open(item, 'rb') as f:
+            clickdat = np.load(f)
+            
+            stimlevelindex[casename].append(clickdat['stimlevelindex'].tolist())
+            onsetframenumber[casename].append(clickdat['onsetframenumber'].tolist())
+          
+            baseline_pos[casename].append(clickdat['baseline_pos'].tolist())
+            onset_pos[casename].append(clickdat['onset_pos'].tolist())
+            
+    lstrain = np.ones_like(implant_recurrens[casename]['F0']) * np.nan
+    rstrain = lstrain.copy()
+            
+    for baseline, onset, stimindex in zip(baseline_pos[casename], onset_pos[casename], stimlevelindex[casename]):
+        l_baseline, d_baseline = distances(baseline)
+        l_onset, d_onset = distances(onset)
+        
+        if l_baseline is not None:
+            strains = (l_onset - l_baseline) / l_baseline * 1000.0
+            d_rel = d_onset / d_baseline * 100.0
+        else:
+            strains = None
+            d_rel = None
+    
+        if stimindex is not None:
+            stimcoord = np.argwhere(implant_recurrens[casename]['stimind'] == stimindex).squeeze()
+            ind0, ind1 = stimcoord
+        else:
+            stimcoord = None
+            ind0, ind1 = None, None
+        
+        # lstrain[ind0, ind1] = strains
+        
+        list_stimcoord.append(stimcoord)
+        list_strains.append(strains)
+        list_d_rel.append(d_rel)
+        
+    implant_recurrens[casename]['leftstrain'] = None
+    implant_recurrens[casename]['rightstrain'] = None
+    implant_recurrens[casename]['dVP'] = None
+    
+    print
+
+# <codecell>
+
+print casename
+
+for i, j, k in zip(list_stimcoord, list_d_rel, list_strains):
+    if i is not None:
+        temp_stimcoord = i * np.nan
+    if j is not None:
+        temp_d_rel = j * np.nan
+    if k is not None:
+        temp_strains = k * np.nan
+
+# <codecell>
+
+for l, temp in [(list_stimcoord, temp_stimcoord), (list_d_rel, temp_d_rel), (list_strains, temp_strains)]:
+    while True:
+        try:
+            none_pos = l.index(None)
+        except:
+            break
+        else:
+            l[none_pos] = temp.copy()
+
+# <codecell>
+
+np.array(list_stimcoord)
+
+# <codecell>
+
+implant_recurrens[casename]['stimind']
 
 # <codecell>
 

@@ -767,13 +767,19 @@ plt.show()
 # 
 # at phonation onset threshold: WHY? this relationship should hold everywhere, no?
 # 
+# however, fundamental frequency and glottal opening might be weakly dependent on subglottal pressure
+# 
 # $$ u_j \propto \omega_0 \sqrt{g} $$
 # 
 # $$ p_s \propto \omega_0^2 g $$
 # 
 # $$ Q \propto u_j g $$
 # 
-# $$ A = \frac{Q}{\sqrt{p_s}} \propto g   $$
+# Bernoulli area: $$ A = \frac{Q}{\sqrt{p_s}} \propto g   $$
+# 
+# aerodynamic power: $$ P = p_s Q \propto u_j g^2 \omega_0^2 \propto \omega_0^3 g^{5/2} $$ 
+# 
+# plot the two sets of independent measurements against each other: $ps Q$ versus $\omega_0^3 g^{5/2}$
 
 # <codecell>
 
@@ -782,16 +788,71 @@ display(Math(r'F(k) = \int_{-\infty}^{\infty} f(x) e^{2\pi i k} dx'))
 
 # <codecell>
 
+plt.close('all')
 # fig, ax = plt.subplots(figsize = (16, 12))
 
-plt.plot(all_dVP.ravel()[chest] * all_F0.ravel()[chest]**2, all_ps.ravel()[chest], 'g.', ms = 20)
-plt.plot(all_dVP.ravel()[falsetto] * all_F0.ravel()[falsetto]**2, all_ps.ravel()[falsetto], 'r.', ms = 20)
+plt.plot(np.log10( all_dVP.ravel()[chest]**(5/2.0) * all_F0.ravel()[chest]**3 ), 
+         all_ps.ravel()[chest] * all_Q.ravel()[chest] * 1e-6, 'g.', ms = 20)
+
+plt.plot(np.log10( all_dVP.ravel()[falsetto]**(5/2.0) * all_F0.ravel()[falsetto]**3 ), 
+         all_ps.ravel()[falsetto] * all_Q.ravel()[falsetto] * 1e-6, 'r.', ms = 20)
+
+plt.xlim(xmax = np.log10(3.5e12))
+
+plt.xlabel('log10( $d_{VP}^{5/2} * F_0^3$ )')
+plt.ylabel('$p_s * Q [W]$')
+# plt.title('onset frequency')
+
+plt.legend(loc = 'upper right', numpoints = 1)
+
+if False:
+    plt.savefig('ps_Dvp.pdf', orientation = 'landscape',
+                papertype = 'letter', format = 'pdf',
+                bbox_inches = 'tight', pad_inches = 0.1)
+plt.show()
+
+# <codecell>
+
+plt.close('all')
+# fig, ax = plt.subplots(figsize = (16, 12))
+
+plt.plot(np.log10(all_dVP.ravel()[chest]), 
+         all_Q.ravel()[chest] / np.sqrt(all_ps.ravel()[chest]), 'g.', ms = 20)
+
+plt.plot(np.log10(all_dVP.ravel()[falsetto]), 
+         all_Q.ravel()[falsetto] / np.sqrt(all_ps.ravel()[falsetto]), 'r.', ms = 20)
+
+# plt.xlim(xmax = 2.0e7)
+
+plt.xlabel('log10( $d_{VP}$ )')
+plt.ylabel('$Q / \sqrt{p_s}$')
+# plt.title('onset frequency')
+
+plt.legend(loc = 'upper right', numpoints = 1)
+
+if False:
+    plt.savefig('ps_Dvp.pdf', orientation = 'landscape',
+                papertype = 'letter', format = 'pdf',
+                bbox_inches = 'tight', pad_inches = 0.1)
+plt.show()
+
+# <codecell>
+
+plt.close('all')
+
+# fig, ax = plt.subplots(figsize = (16, 12))
+
+plt.plot(np.log10( all_dVP.ravel()[chest] * all_F0.ravel()[chest]**2 ), 
+         all_ps.ravel()[chest], 'g.', ms = 20)
+
+plt.plot(np.log10( all_dVP.ravel()[falsetto] * all_F0.ravel()[falsetto]**2 ), 
+         all_ps.ravel()[falsetto], 'r.', ms = 20)
 
 # plt.plot(all_dVP_np.ravel(), np.ones_like(all_dVP_np).ravel() * 20, '|', ms = 20, mec = 'blue', mfc = 'None', label = 'no onset')
 
-plt.xlim(xmax = 2.0e7)
+plt.xlim(xmax = np.log10(2.0e7))
 
-plt.xlabel('$d_{VP} * F_0^2$')
+plt.xlabel('log10( $d_{VP} * F_0^2$ )')
 plt.ylabel('$p_s [Pa]$')
 # plt.title('onset frequency')
 

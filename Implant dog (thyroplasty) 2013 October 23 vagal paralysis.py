@@ -38,7 +38,7 @@ xls_dir = './Implant_2013_10_23/'
 
 # <codecell>
 
-!ls -alot $xls_dir
+!ls -alot $xls_dir/*.xls*
 
 # <codecell>
 
@@ -54,17 +54,21 @@ vagal_book.sheet_names()
 
 # <codecell>
 
+# make new dict for data
+
 implant_vagal = {str(item): None for item in vagal_book.sheet_names()}
 
-implant_vagal['No Implant'] = dict(hdf5datadir = "right SLN versus right RLN/No implant")
-implant_vagal['Rectangle'] = dict(hdf5datadir = "right SLN versus right RLN/Rectangular implant")
-implant_vagal['Divergent'] = dict(hdf5datadir = "right SLN versus right RLN/Divergent implant")
-implant_vagal['Convergent'] = dict(hdf5datadir = "right SLN versus right RLN/Convergent implant")
-implant_vagal['V-Shaped'] = dict(hdf5datadir = "right SLN versus right RLN/V-shaped implant")
-implant_vagal['ELRectangle'] = dict(hdf5datadir = "right SLN versus right RLN/Long rectangular implant")
-implant_vagal['ELDivergent'] = dict(hdf5datadir = "right SLN versus right RLN/Long divergent implant")
-implant_vagal['ELConvergent'] = dict(hdf5datadir = "right SLN versus right RLN/Long convergent implant")
-implant_vagal['ELV-shaped'] = dict(hdf5datadir = "right SLN versus right RLN/Long V-shaped implant")
+expname = "right SLN versus right RLN"
+
+implant_vagal['No Implant'] = dict(hdf5datadir = expname + "/No implant")
+implant_vagal['Rectangle'] = dict(hdf5datadir = expname + "/Rectangular implant")
+implant_vagal['Divergent'] = dict(hdf5datadir = expname + "/Divergent implant")
+implant_vagal['Convergent'] = dict(hdf5datadir = expname + "/Convergent implant")
+implant_vagal['V-Shaped'] = dict(hdf5datadir = expname + "/V-shaped implant")
+implant_vagal['ELRectangle'] = dict(hdf5datadir = expname + "/Long rectangular implant")
+implant_vagal['ELDivergent'] = dict(hdf5datadir = expname + "/Long divergent implant")
+implant_vagal['ELConvergent'] = dict(hdf5datadir = expname + "/Long convergent implant")
+implant_vagal['ELV-shaped'] = dict(hdf5datadir = expname + "/Long V-shaped implant")
 
 # <codecell>
 
@@ -73,19 +77,40 @@ for key, value in implant_vagal.items():
            os.path.isdir(os.path.join(basedir, value['hdf5datadir'])), 
            len(glob.glob(os.path.join(basedir, value['hdf5datadir'], '*.hdf5'))))
 
+# <rawcell>
+
+# !ls -alo "../InVivoDog_2013_10_23/data LabView/right SLN versus right RLN"
+
 # <codecell>
 
-!ls -alo "../InVivoDog_2013_10_23/data LabView/right SLN versus right RLN"
+os.listdir("../InVivoDog_2013_10_23/data LabView/" + expname, )
 
 # <codecell>
 
 for casename in vagal_book.sheet_names():
     sheet = vagal_book.sheet_by_name(casename)
-    print sheet.number, sheet.name, sheet.nrows, sheet.ncols, implant_vagal[casename]
+    
+    print "#: {}, name: {}\t #rows: {}, #cols: {}\t{}".format(sheet.number, 
+                                                             sheet.name, 
+                                                             sheet.nrows, 
+                                                             sheet.ncols, 
+                                                             implant_vagal[casename])
 
 # <codecell>
 
-Nstimulation = 64 # 8 * 8 = (7 + 1) * (7 + 1)
+# number of stimulations: (7 + 1) * (7 + 1) = 8 * 8
+
+Nstimulation = (7 + 1)**2
+print "Nstimulation: ", Nstimulation
+
+# <codecell>
+
+implant_vagal
+
+# <markdowncell>
+
+# fill data dict implant_vagal with manually measured data from xls(x) files
+# ---
 
 # <codecell>
 
@@ -108,7 +133,7 @@ for casename in vagal_book.sheet_names():
             onset_list.append(int(onset))
             
         try:
-            if T.strip() in ['']:
+            if T.strip().lower() in ['', 'np']:
                 T_list.append(np.nan)
         except:
             T_list.append(int(T))
@@ -120,20 +145,28 @@ for casename in vagal_book.sheet_names():
 
 # <codecell>
 
+implant_vagal
+
+# <codecell>
+
 min_F0 = np.min([np.nanmin(implant_vagal[casename]['F0']) for casename in implant_vagal])
 max_F0 = np.max([np.nanmax(implant_vagal[casename]['F0']) for casename in implant_vagal])
 
-print min_F0, max_F0
+print "min_F0: {} Hz, max_F0: {} Hz".format(min_F0, max_F0)
 
 # <codecell>
 
 # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
     
-Voffset_ps = -38.0e-3 # depends on the date
+Voffset_ps = -65.6e-3 # -38.0e-3 # depends on the date
 isoampgain_ps = 2.0 # I measured it more accurately, it is slightly more than 2
     
-Voffset_Q = 33.0e-3 - 4.6e-3# depends on the date and on the time of the experiment!!!
+Voffset_Q = 27.8e-3 # 33.0e-3 # depends on the date and on the time of the experiment!!!
 isoampgain_Q = 2.0
+
+# <codecell>
+
+%run -i 'tools for implant analysis.py'
 
 # <codecell>
 
@@ -145,84 +178,35 @@ isoampgain_Q = 2.0
 num_rightSLN = 1
 num_rightRLN = 3
 
-##########################################################################
+relative_nerve_levels = [('rightSLN', num_rightSLN), 
+                         ('rightRLN', num_rightRLN)]
 
-for casename in implant_vagal:
-    
-    hdf5dirname = os.path.join(basedir, implant_vagal[casename]['hdf5datadir'])
-    if not os.path.isdir(hdf5dirname):
-        continue
+min_ps, min_Q = getonsetdata(basedir, implant_vagal, relative_nerve_levels)
 
-    hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
-    if len(hdf5filename) > 1:
-        continue
-    else:
-        hdf5filename = hdf5filename[0]
-        
-    print casename
-    
-    d = dogdata.DogData(datadir = hdf5dirname, datafile = os.path.basename(hdf5filename))
+# <codecell>
 
-    d.get_all_data()
-    
-    # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
-    Vconv = d.convEMG # EMG conversion is just conversion from numbers to Volts
-    
-    # WRONG: d.allps = isoampgain_ps * d.allps - Voffset_ps / Vconv * d.convps
-    d.allps = (d.allps / d.convps - Voffset_ps / Vconv) * isoampgain_ps * d.convps
-    
-    print "min_ps: {}, max_ps: {}".format(np.min(d.allps), np.max(d.allps))
-    
-    # WRONG: d.allQ = isoampgain_Q * d.allQ - Voffset_Q / Vconv * d.convQ
-    d.allQ = (d.allQ / d.convQ - Voffset_Q / Vconv) * isoampgain_Q * d.convQ
+implant_vagal
 
-    print "min_Q: {}, max_Q: {}".format(np.min(d.allQ), np.max(d.allQ))
-    print
-        
-    F0 = np.ones((d.Nlevels, d.Nlevels)) * np.nan
-    onsettime_ms = np.ones_like(F0) * np.nan
-    ps_onset = np.ones_like(F0) * np.nan
-    leftSLN = np.ones_like(F0) * np.nan
-    rightRLN = np.ones_like(F0) * np.nan
-    stimind = np.ones_like(F0) * np.nan
+# <codecell>
 
-    for stimnum, (SLNlevel, rightRLNlevel) in enumerate(d.a_rellevels[:, [num_rightSLN, num_rightRLN]]):
-        nerve_xaxis = rightRLNlevel
-        nerve_yaxis = SLNlevel
-        
-        stimind[nerve_yaxis, nerve_xaxis] = stimnum
-        leftSLN[nerve_yaxis, nerve_xaxis] = SLNlevel
-        rightRLN[nerve_yaxis, nerve_xaxis] = rightRLNlevel
-        
-        onsettime_ms[nerve_yaxis, nerve_xaxis] = implant_vagal[casename]['onsettime_ms'][stimnum]
-        F0[nerve_yaxis, nerve_xaxis] = implant_vagal[casename]['F0'][stimnum]
-        
-        ps_onset[nerve_yaxis, nerve_xaxis] = np.interp(onsettime_ms[nerve_yaxis, nerve_xaxis] / 1000., 
-                                                       d.time_psQ, d.allps[stimnum, :],
-                                                       left = np.nan, right = np.nan)
-    implant_vagal[casename]['leftSLN'] = leftSLN
-    implant_vagal[casename]['rightRLN'] = rightRLN
-    implant_vagal[casename]['stimind'] = stimind
-    
-    implant_vagal[casename]['F0'] = F0
-    implant_vagal[casename]['onsettime_ms'] = onsettime_ms
-    implant_vagal[casename]['ps_onset'] = ps_onset
+print "before correction"
+print "min_ps: ", min_ps
+print "min_Q: ", min_Q
 
 # <codecell>
 
 casename = 'Rectangle'
 
 hdf5dirname = os.path.join(basedir, implant_vagal[casename]['hdf5datadir'])
-
 hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
-
 hdf5filename = hdf5filename[0]
     
 print casename
 
 d = dogdata.DogData(datadir = hdf5dirname, datafile = os.path.basename(hdf5filename))
-
 d.get_all_data()
+
+Vconv = d.convEMG
 
 # <codecell>
 
@@ -231,9 +215,32 @@ print casename
 print "min_Q: {}, max_Q: {}".format(np.min(d.allQ), np.max(d.allQ))
 print "min_ps: {}, max_ps: {}".format(np.min(d.allps), np.max(d.allps))
 
-np.min(d.allQ) / isoampgain_Q / d.convQ * Vconv
+print 
 
-np.min(d.allps) / isoampgain_ps / d.convps * Vconv
+print "total offset Q: {} Volts".format( np.min(d.allQ) / d.convQ * Vconv )
+
+print "total offset ps: {} Volts".format( np.min(d.allps) / d.convps * Vconv )
+
+# <codecell>
+
+np.unravel_index(np.argmin(d.allps), d.allps.shape)
+
+# <codecell>
+
+plt.close('all')
+plt.plot(d.allps[: , 1:10] * 2) # / d.convps * Vconv)
+
+# <codecell>
+
+plt.close('all')
+plt.imshow(d.allps, aspect = 4)
+
+plt.colorbar(orientation = 'horizontal')
+
+# <codecell>
+
+plt.close('all')
+plt.plot(d.allps[20, :])
 
 # <codecell>
 
@@ -244,10 +251,14 @@ print min_ps_onset, max_ps_onset
 
 # <codecell>
 
-# make spectrogram arrays with the measured onset time and onset frequency indicated by horizontal and vertical lines
+min_Q_onset = np.min([np.nanmin(implant_vagal[casename]['Q_onset']) for casename in implant_vagal])
+max_Q_onset = np.max([np.nanmax(implant_vagal[casename]['Q_onset']) for casename in implant_vagal])
 
-# num_leftSLN = 0
-# num_rightRLN = 3
+print min_Q_onset, max_Q_onset
+
+# <codecell>
+
+# make spectrogram arrays with the measured onset time and onset frequency indicated by horizontal and vertical lines
 
 try:
     del d.allspecs
@@ -255,15 +266,19 @@ try:
 except:
     pass
 
-for casename in implant_recurrens:
-    hdf5dirname = os.path.join(basedir, implant_recurrens[casename]['hdf5datadir'])
+for casename in implant_vagal:
+    hdf5dirname = os.path.join(basedir, implant_vagal[casename]['hdf5datadir'])
     if not os.path.isdir(hdf5dirname):
         print "hdf5 directory does not exist: ", hdf5dirname
         continue
 
     hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
     if len(hdf5filename) > 1:
-        continue
+        print "more than one hdf5 file found"
+        print hdf5filename
+        hdf5filename = sorted(hdf5filename)[-1]
+        print "use latest"
+        print hdf5filename
     else:
         hdf5filename = hdf5filename[0]
         
@@ -273,13 +288,8 @@ for casename in implant_recurrens:
 
     d.get_all_data()
     
-    # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
-    Vconv = d.convEMG # EMG conversion is just conversion from numbers to Volts
+    isoamp_adjustment(d)
     
-    d.allps = isoampgain_ps * d.allps - Voffset_ps / Vconv * d.convps
-    
-    d.allQ = isoampgain_Q * d.allQ - Voffset_Q / Vconv * d.convQ
-
     hdf5file = os.path.basename(hdf5filename)
     
     d.minps = d.allps.min()
@@ -299,12 +309,12 @@ for casename in implant_recurrens:
         grid_xaxis = dict(label = 'right RLN', level = 'rightRLN')
         grid_yaxis = dict(label = 'right SLN', level = 'rightSLN')
 
-    gridx = implant_recurrens[casename]['rightRLN'].ravel()
-    gridy = implant_recurrens[casename]['leftSLN'].ravel()
-    stimind = implant_recurrens[casename]['stimind'].ravel()
+    gridx = implant_vagal[casename]['rightRLN'].ravel()
+    gridy = implant_vagal[casename]['rightSLN'].ravel()
+    stimind = implant_vagal[casename]['stimind'].ravel()
 
-    otime = implant_recurrens[casename]['onsettime_ms'].ravel() / 1000.
-    F0 = implant_recurrens[casename]['F0'].ravel()
+    otime = implant_vagal[casename]['onsettime_ms'].ravel() / 1000.
+    F0 = implant_vagal[casename]['F0'].ravel()
     
     for signal in ['psub', 'pout']:
         d.show_spectrograms(signal = signal, fmax = 500,
@@ -332,53 +342,16 @@ help dogdata.DogData.show_spectrograms
 
 # <codecell>
 
-implant_recurrens[casename].keys()
+implant_vagal[casename].keys()
 
 # <codecell>
 
-for casename in implant_recurrens:
-    F0 = implant_recurrens[casename]['F0']
-    
-    try:
-        plt.clf()
-    except:
-        pass
-    
-    plt.imshow(F0)
-    
-    plt.xlabel('right RLN')
-    plt.ylabel('SLN')
-    
-    plt.clim(vmin = min_F0, vmax = max_F0)
-    
-    plt.title("recurrent nerve paralysis: %s" % casename)
-    
-    cb = plt.colorbar()
-    cb.set_label('frequency [Hz]')
-    
-    plt.savefig("recurrent_nerve_paralysis.F0.%s.pdf" % casename, 
-                orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
-    
-    ps_onset = implant_recurrens[casename]['ps_onset']
-    
-    plt.clf()
-    
-    plt.imshow(ps_onset)
-    
-    plt.xlabel('right RLN')
-    plt.ylabel('SLN')
-    
-    # plt.clim(vmin = min_ps_onset, vmax = max_ps_onset)
-    
-    plt.title("recurrent nerve paralysis: %s" % casename)
-    
-    cb = plt.colorbar()
-    cb.set_label('ps [Pa]')
-    
-    plt.savefig("recurrent_nerve_paralysis.Ps.%s.pdf" % casename,
-                orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
+plotonsetdata(implant_vagal, name_paralysis = 'vagal nerve paralysis', 
+              ps_normalized = True, Q_normalized = True)
 
 # <codecell>
+
+print hdf5dirname
 
 d = dogdata.DogData(datadir = hdf5dirname, datafile = os.path.basename(hdf5filename))
 
@@ -386,12 +359,19 @@ d.get_all_data()
 
 # <codecell>
 
+plt.close('all')
+plt.plot(d.allps[-1, :])
+
+# <codecell>
+
+plt.close('all')
+
 xind = 7
 yind = 7
 
-otime = implant_recurrens[casename]['onsettime_ms'][yind, xind] / 1000.
-periodT = 1/implant_recurrens[casename]['F0'][yind, xind]
-stimnum = implant_recurrens[casename]['stimind'][yind, xind]
+otime = implant_vagal[casename]['onsettime_ms'][yind, xind] / 1000.
+periodT = 1/implant_vagal[casename]['F0'][yind, xind]
+stimnum = implant_vagal[casename]['stimind'][yind, xind]
 
 print stimnum
 
@@ -399,6 +379,7 @@ try:
     plt.clf()
 except:
     pass
+
 plt.plot(d.time_ac, d.allpsub[stimnum, :], lw = 2.0, marker = None)
 
 plt.axvspan(xmin = otime, xmax = otime + 4 * periodT, alpha = 0.5, facecolor = 'green')
@@ -420,8 +401,7 @@ import subplotgrid
 
 # make amplitude plot arrays with the measured onset time and onset period indicated with a green range
 
-# num_leftSLN = 0
-# num_rightRLN = 3
+plt.close('all')
 
 try:
     del d.allspecs
@@ -429,14 +409,18 @@ try:
 except:
     pass
 
-for casename in implant_recurrens:
-    hdf5dirname = os.path.join(basedir, implant_recurrens[casename]['hdf5datadir'])
+for casename in implant_vagal:
+    hdf5dirname = os.path.join(basedir, implant_vagal[casename]['hdf5datadir'])
     if not os.path.isdir(hdf5dirname):
         continue
 
     hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
     if len(hdf5filename) > 1:
-        continue
+        print "found more than one hdf5 file"
+        print hdf5filename
+        print "take latest"
+        hdf5filename = sorted(hdf5filename)[-1]
+        print hdf5filename
     else:
         hdf5filename = hdf5filename[0]
         
@@ -446,12 +430,7 @@ for casename in implant_recurrens:
 
     d.get_all_data()
     
-    # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
-    Vconv = d.convEMG # EMG conversion is just conversion from numbers to Volts
-    
-    d.allps = isoampgain_ps * d.allps - Voffset_ps / Vconv * d.convps
-    
-    d.allQ = isoampgain_Q * d.allQ - Voffset_Q / Vconv * d.convQ
+    isoamp_adjustment(d)
 
     hdf5file = os.path.basename(hdf5filename)
     
@@ -472,12 +451,12 @@ for casename in implant_recurrens:
         grid_xaxis = dict(label = 'right RLN', level = 'rightRLN')
         grid_yaxis = dict(label = 'right SLN', level = 'rightSLN')
 
-    gridx = implant_recurrens[casename]['rightRLN'].ravel()
-    gridy = implant_recurrens[casename]['leftSLN'].ravel()
-    stimind = implant_recurrens[casename]['stimind'].ravel()
+    gridx = implant_vagal[casename]['rightRLN'].ravel()
+    gridy = implant_vagal[casename]['rightSLN'].ravel()
+    stimind = implant_vagal[casename]['stimind'].ravel()
 
-    otime = implant_recurrens[casename]['onsettime_ms'].ravel() / 1000.
-    periodT = 1 / implant_recurrens[casename]['F0'].ravel()
+    otime = implant_vagal[casename]['onsettime_ms'].ravel() / 1000.
+    periodT = 1 / implant_vagal[casename]['F0'].ravel()
         
     for signal in ['psub', 'pout']:
         allspecs = subplotgrid.Specgrid(nrows = d.Nlevels, ncols = d.Nlevels, 
@@ -544,69 +523,46 @@ plt.xlim(xmin = otime[ind] - 15 * periodT[ind], xmax = otime[ind] + 15 * periodT
 
 # <codecell>
 
-# left vagal nerve paralysis
-#
-# only right SLN and right RLN
-# so relative levels from column 1 for right SLN and column 3 for right RLN
+%run -i 'tools for implant analysis.py'
 
-num_rightSLN = 1
-num_rightRLN = 3
+# <codecell>
 
-##########################################################################
+exportdata2csv(implant_vagal, filename = 'vagal_paralysis_2013_10_23')
 
-for casename in implant_vagal:
-    
-    hdf5dirname = os.path.join(basedir, implant_vagal[casename]['hdf5datadir'])
-    if not os.path.isdir(hdf5dirname):
-        continue
+# <codecell>
 
-    hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
-    if len(hdf5filename) > 1:
-        continue
-    else:
-        hdf5filename = hdf5filename[0]
-        
-    print casename
-    
-    d = dogdata.DogData(datadir = hdf5dirname, datafile = os.path.basename(hdf5filename))
+implant_vagal.keys
 
-    d.get_all_data()
-    
-    # need to correct ps, Q, and EMG1 because of 2:1 iso-amp which also has some channel dependent offset
-    Vconv = d.convEMG # EMG conversion is just conversion from numbers to Volts
-    
-    d.allps = isoampgain_ps * d.allps - Voffset_ps / Vconv * d.convps
-    
-    d.allQ = isoampgain_Q * d.allQ - Voffset_Q / Vconv * d.convQ
-    
-    F0 = np.ones((d.Nlevels, d.Nlevels)) * np.nan
-    onsettime_ms = np.ones_like(F0) * np.nan
-    ps_onset = np.ones_like(F0) * np.nan
-    leftSLN = np.ones_like(F0) * np.nan
-    rightRLN = np.ones_like(F0) * np.nan
-    stimind = np.ones_like(F0) * np.nan
+# <codecell>
 
-    for stimnum, (SLNlevel, rightRLNlevel) in enumerate(d.a_rellevels[:, [num_rightSLN, num_rightRLN]]):
-        nerve_xaxis = rightRLNlevel
-        nerve_yaxis = SLNlevel
-        
-        stimind[nerve_yaxis, nerve_xaxis] = stimnum
-        leftSLN[nerve_yaxis, nerve_xaxis] = SLNlevel
-        rightRLN[nerve_yaxis, nerve_xaxis] = rightRLNlevel
-        
-        onsettime_ms[nerve_yaxis, nerve_xaxis] = implant_vagal[casename]['onsettime_ms'][stimnum]
-        F0[nerve_yaxis, nerve_xaxis] = implant_vagal[casename]['F0'][stimnum]
-        
-        ps_onset[nerve_yaxis, nerve_xaxis] = np.interp(onsettime_ms[nerve_yaxis, nerve_xaxis] / 1000., 
-                                                       d.time_psQ, d.allps[stimnum, :],
-                                                       left = np.nan, right = np.nan)
-    implant_vagal[casename]['leftSLN'] = leftSLN
-    implant_vagal[casename]['rightRLN'] = rightRLN
-    implant_vagal[casename]['stimind'] = stimind
-    
-    implant_vagal[casename]['F0'] = F0
-    implant_vagal[casename]['onsettime_ms'] = onsettime_ms
-    implant_vagal[casename]['ps_onset'] = ps_onset
+casenames = ['No Implant',
+             'Rectangle', 'Convergent', 'Divergent', 'V-Shaped',
+             'ELRectangle', 'ELConvergent', 'ELDivergent', 'ELV-shaped']
+
+# <codecell>
+
+Bernoulli_Power(implant_vagal)
+
+# <codecell>
+
+for varname, label in zip(varnames, varlabels):
+    plot_boxplot(implant_vagal, casenames, varname = varname, label = label, 
+                 title = 'vagal nerve paralysis')
+
+# <codecell>
+
+scatterplot(implant_vagal, casenames, title = 'vagal')
+
+# <codecell>
+
+plt.show
+
+# <codecell>
+
+import pickle
+
+with open('vagal_paralysis_2013_10_23.pkl', 'wb') as f:
+    pickle.dump(implant_vagal, f, protocol = -1)
 
 # <codecell>
 

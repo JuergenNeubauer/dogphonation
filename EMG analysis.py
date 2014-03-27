@@ -55,6 +55,10 @@ ls -alot '/extra/InVivoDog/InVivoDog_2013_12_18/data LabView/'
 
 # <codecell>
 
+from IPython.display import HTML
+
+# <codecell>
+
 !tree "$datadir"
 
 # <codecell>
@@ -76,7 +80,7 @@ allhdf5files = glob.glob('/extra/InVivoDog/InVivoDog_2013_12_18/data LabView/*/*
 
 # <codecell>
 
-import time
+import time, os
 
 # <codecell>
 
