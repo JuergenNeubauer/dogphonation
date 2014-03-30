@@ -394,16 +394,24 @@ def exportdata2csv(implant_recurrens, filename = 'recurrens_paralysis_2013_10_23
     for casename in implant_recurrens:
         print 'casename: ', casename
         
-        sortindices = np.argsort(implant_recurrens[casename]['stimind'].ravel())
+        # sometimes phonation was determined after stimulation had stopped
+        # this sound is due to switching off the stimulation and the flow ramp
+        phonation = implant_recurrens[casename]['onsettime_ms'] < 1500
+
+        # sort the un-raveled array
+        sortindices = np.argsort( implant_recurrens[casename]['stimind'].ravel() )
         
-        alldata[casename] = np.array([implant_recurrens[casename][varname].ravel()[sortindices] 
+        alldata[casename] = np.array([np.where(phonation, implant_recurrens[casename][varname], np.nan).ravel()[sortindices] 
                                       for varname in varnames]).T
+        
+        alldata[casename][:, 0] = implant_recurrens[casename]['stimind'].ravel()[sortindices].astype(int)
         
         csvfilename = '{}.{}.alldata.csv'.format(filename, casename)
     
         with open(csvfilename, 'wt') as f:
             writecsv = csv.writer(f)
             
+            # write the header
             writecsv.writerow(varnames)
             
             for row in alldata[casename]:
@@ -494,4 +502,7 @@ def scatterplot(implant_recurrens, casenames, title = 'recurrens'):
         # figname = '{}.power-area-F0.{}.pdf'.format(title, casename)
         plt.savefig(figname, orientation = 'landscape', bbox_inches = 'tight')
         
+
+# <codecell>
+
 

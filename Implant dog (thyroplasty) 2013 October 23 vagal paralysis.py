@@ -3,34 +3,7 @@
 
 # <codecell>
 
-%matplotlib inline
-
-# <codecell>
-
-%config InlineBackend
-
-# <codecell>
-
-%config InlineBackend.close_figures = False
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-print mpl.is_interactive()
-print plt.isinteractive()
-
-# <codecell>
-
-import sys, os, xlrd, glob
-import numpy as np
-
-# <codecell>
-
 sys.path.append('/extra/InVivoDog/python/cine/tools')
-
-# <codecell>
-
-import dogdata
 
 # <codecell>
 

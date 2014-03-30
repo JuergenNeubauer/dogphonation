@@ -43,6 +43,9 @@ implant_recurrens['GOOD ELDivergent'] = dict(hdf5datadir = expname + "/long dive
 implant_recurrens['GOOD ELConvergent'] = dict(hdf5datadir = expname + "/long convergent implant")
 implant_recurrens['GOOD EL-V Shaped'] = dict(hdf5datadir = expname + "/long V-shaped implant")
 
+
+del implant_recurrens['GOOD V-Shaped'] # use data from GOOD-V-shape DC
+
 # <codecell>
 
 for key, value in implant_recurrens.items():
@@ -53,10 +56,6 @@ for key, value in implant_recurrens.items():
     except Exception as e:
         print key, value
         print e
-
-# <codecell>
-
-del implant_recurrens['GOOD V-Shaped'] # use data from GOOD-V-shape DC
 
 # <rawcell>
 

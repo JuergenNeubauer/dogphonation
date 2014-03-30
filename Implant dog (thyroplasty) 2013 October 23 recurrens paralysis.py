@@ -519,6 +519,22 @@ implant_recurrens
 
 # <codecell>
 
+implant_recurrens['Baseline']['stimind'].astype(np.uint16)
+
+# <codecell>
+
+sortindices = np.argsort(implant_recurrens['Baseline']['stimind'].ravel())
+
+# <codecell>
+
+phonation = implant_recurrens['Baseline']['onsettime_ms'] < 1500
+
+# <codecell>
+
+phonation.ravel()[sortindices]
+
+# <codecell>
+
 exportdata2csv(implant_recurrens, filename = 'recurrens_paralysis_2013_10_23')
 
 # <codecell>
@@ -548,7 +564,7 @@ for varname in varnames:
 
 # <codecell>
 
-for varname, label in zip(varnames, varlabels):
+    for varname, label in zip(varnames, varlabels):
     plot_boxplot(implant_recurrens, casenames, varname = varname, label = label, 
                  title = 'recurrent nerve paralysis')
 
