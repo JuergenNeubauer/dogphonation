@@ -3,71 +3,12 @@
 
 # <codecell>
 
-import numpy as np
-
-# <codecell>
-
-%matplotlib inline
-
-# <codecell>
-
-%config
-
-# <codecell>
-
-%config InlineBackend.close_figures = False
-
-# <codecell>
-
-%config InlineBackend
-
-# <codecell>
-
-import matplotlib as mpl
-
-# <codecell>
-
-mpl.get_backend()
-
-# <codecell>
-
-from matplotlib import pyplot as plt
-
-# <codecell>
-
-plt.get_backend()
-
-# <codecell>
-
-import sys, os, csv, glob
-import numpy as np
-
-# %pylab inline
-
-import matplotlib as mpl
-# use the backend for inline plots in the IPython Notebook
-# so then don't need to use magic pylab with inline option
-mpl.use('module://IPython.kernel.zmq.pylab.backend_inline')
-
-import matplotlib.pyplot as plt
-
-print "Matplotlib will use backend: ", mpl.get_backend()
-print "Pyplot will use backend: ", plt.get_backend()
-
-# <codecell>
-
 print "matplotlib: ", mpl.is_interactive()
 mpl.interactive(False)
 print "pyplot: ", plt.isinteractive()
 plt.interactive(False)
 
 # <codecell>
-
-sys.path.append("/extra/InVivoDog/python/cine/tools")
-
-# DogData imports matplotlib and tries to set the backend to GTKAgg
-# need to change this behavior!!!
-from dogdata import DogData
 
 datadir = "/extra/InVivoDog/InVivoDog_2012_03_21/data LabView/SLN_trunkRLN/"
 
@@ -777,7 +718,7 @@ plt.show()
 # 
 # Bernoulli area: $$ A = \frac{Q}{\sqrt{p_s}} \propto g   $$
 # 
-# aerodynamic power: $$ P = p_s Q \propto u_j g^2 \omega_0^2 \propto \omega_0^3 g^{5/2} $$ 
+# aerodynamic power: $$ P = p_s Q \propto u_j g^2 \omega_0^2 \propto \omega_0^3 g^{5/2} \propto \omega_0^3 A^{5/2}$$ 
 # 
 # plot the two sets of independent measurements against each other: $ps Q$ versus $\omega_0^3 g^{5/2}$
 

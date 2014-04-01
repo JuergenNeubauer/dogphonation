@@ -39,6 +39,10 @@ def getonsetdata(basedir, implant_vagal, relative_nerve_levels):
     nerve01_name, nerve01_ind = relative_nerve_levels[0]
     nerve02_name, nerve02_ind = relative_nerve_levels[1]
     
+    print "nerve01_name: {}, nerve01_ind: {}".format(nerve01_name, nerve01_ind)
+    print "nerve02_name: {}, nerve02_ind: {}".format(nerve02_name, nerve02_ind)
+    print
+    
     min_ps = dict(casename = None, value = np.infty)
     min_Q = dict(casename = None, value = np.infty)
     
@@ -46,6 +50,7 @@ def getonsetdata(basedir, implant_vagal, relative_nerve_levels):
         
         hdf5dirname = os.path.join(basedir, implant_vagal[casename]['hdf5datadir'])
         if not os.path.isdir(hdf5dirname):
+            print "no hdf5 directory found: ", hdf5dirname
             continue
     
         hdf5filename = glob.glob(os.path.join(hdf5dirname, '*.hdf5'))
@@ -54,17 +59,19 @@ def getonsetdata(basedir, implant_vagal, relative_nerve_levels):
             # print "skipping for now"
             # print
             # continue
-            print sorted(hdf5filename)
-            hdf5filename = sorted(hdf5filename)[-1]
+            print sorted(hdf5filename, key = datetimestamp)
+            hdf5filename = sorted(hdf5filename, key = datetimestamp)[-1]
             print "selecting the latest one: ", hdf5filename
         else:
-            hdf5filename = hdf5filename[0]
+            hdf5filename = hdf5filename[-1]
             
         print casename
         
         d = dogdata.DogData(datadir = hdf5dirname, datafile = os.path.basename(hdf5filename))
     
         d.get_all_data()
+        
+        print "number of stimulation levels: ", d.Nlevels
         
         if np.min(d.allps) < min_ps['value']:
             min_ps['casename'] = casename
@@ -106,8 +113,14 @@ def getonsetdata(basedir, implant_vagal, relative_nerve_levels):
             # rightRLN[nerve_yaxis, nerve_xaxis] = rightRLNlevel
             nerve02[nerve_yaxis, nerve_xaxis] = nerve02_level
 
-            
-            onsettime_ms[nerve_yaxis, nerve_xaxis] = implant_vagal[casename]['onsettime_ms'][stimnum]
+            try:
+                onsettime_ms[nerve_yaxis, nerve_xaxis] = implant_vagal[casename]['onsettime_ms'][stimnum]
+            except Exception as e:
+                print e
+                print "stimnum: ", stimnum
+                print "nerve_xaxis: ", nerve_xaxis
+                print "nerve_yaxis: ", nerve_yaxis
+                print "onsettime_ms.shape: ", onsettime_ms.shape
             
             F0[nerve_yaxis, nerve_xaxis] = implant_vagal[casename]['F0'][stimnum]
             
@@ -140,7 +153,7 @@ def getonsetdata(basedir, implant_vagal, relative_nerve_levels):
 
 # <codecell>
 
-def plotonsetdata(implant_vagal, name_paralysis = 'vagal nerve paralysis', ps_normalized = True, Q_normalized = True):
+def plotonsetdata(implant_vagal, name_paralysis = 'vagal nerve paralysis', F0_normalized = True, ps_normalized = True, Q_normalized = True):
 
     min_F0 = np.min([np.nanmin(implant_vagal[casename]['F0']) for casename in implant_vagal])
     max_F0 = np.max([np.nanmax(implant_vagal[casename]['F0']) for casename in implant_vagal])
@@ -176,7 +189,8 @@ def plotonsetdata(implant_vagal, name_paralysis = 'vagal nerve paralysis', ps_no
         plt.xlabel(xlabel) # ('right RLN')
         plt.ylabel(ylabel) # ('right SLN')
         
-        plt.clim(vmin = min_F0, vmax = max_F0)
+        if F0_normalized:
+            plt.clim(vmin = min_F0, vmax = max_F0)
         
         plt.title("%s: %s" % (name_paralysis, casename))
         
@@ -185,7 +199,12 @@ def plotonsetdata(implant_vagal, name_paralysis = 'vagal nerve paralysis', ps_no
         
         plt.grid(False)
         
-        plt.savefig("%s.F0.%s.pdf" % (name_paralysis.replace(' ', '_'), casename), 
+        savename = "%s.F0.%s.pdf" % (name_paralysis.replace(' ', '_'), casename)
+        
+        if F0_normalized:
+            savename = savename.replace('.F0.', '.F0.Normalized.')
+        
+        plt.savefig(savename, 
                     orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
         
         ######################################################################################
@@ -447,14 +466,14 @@ def datetimestamp(cinefilename, debug = False):
 def scatterplot(implant_recurrens, casenames, title = 'recurrens'):
 
     markers = ['o', 's', '*', 'v', '^', '<', '>', 'D', 'p', 'h', '8']
-    markers = ['o'] * 12
+    # markers = ['o'] * 12
     
-    allF0 = np.array([implant_recurrens[casename]['F0'].ravel() for casename in casenames]).ravel()
-    allA = np.array([implant_recurrens[casename]['A_onset'].ravel() for casename in casenames]).ravel()
-    allP = np.array([implant_recurrens[casename]['P_onset'].ravel() for casename in casenames]).ravel()
+    allF0 = np.hstack([implant_recurrens[casename]['F0'].ravel() for casename in casenames])
+    allA = np.hstack([implant_recurrens[casename]['A_onset'].ravel() for casename in casenames])
+    allP = np.hstack([implant_recurrens[casename]['P_onset'].ravel() for casename in casenames])
     
-    allps = np.array([implant_recurrens[casename]['ps_onset'].ravel() for casename in casenames]).ravel()
-    allQ = np.array([implant_recurrens[casename]['Q_onset'].ravel() for casename in casenames]).ravel()
+    allps = np.hstack([implant_recurrens[casename]['ps_onset'].ravel() for casename in casenames])
+    allQ = np.hstack([implant_recurrens[casename]['Q_onset'].ravel() for casename in casenames])
     
     for casename in casenames:
         plt.close('all')
@@ -498,7 +517,7 @@ def scatterplot(implant_recurrens, casenames, title = 'recurrens'):
         
         # plt.gray()
         
-        figname = '{}.ps-Q-F0.{}.pdf'.format(title, casename)
+        figname = '{}.ps-Q-F0.{}.pdf'.format(title.replace(' ', '_'), casename)
         # figname = '{}.power-area-F0.{}.pdf'.format(title, casename)
         plt.savefig(figname, orientation = 'landscape', bbox_inches = 'tight')
         
