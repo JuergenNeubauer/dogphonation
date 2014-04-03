@@ -185,7 +185,8 @@ display(HTML(s))
 # ## We control the actuators (sort of) via the nerves connected to them: SLN, RLN, and branches of the RLN: TA, LCA/IA, PCA
 # 
 # <center>
-# <img src="files/postures.png" width=700 />
+# <img src="files/postures.png" width=500 />
+# <img src="files/TAatOnset.png" width=500 />
 # </center>
 
 # <markdowncell>
