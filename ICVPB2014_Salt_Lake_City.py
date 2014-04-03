@@ -4,14 +4,32 @@
 # <rawcell>
 
 # <style type="text/css">
-# .input, .output_prompt {
-# display:none !important;
-# }
+#     .input, .output_prompt {
+#             display:none !important;
+#     }
+#     table, th, tr, td {
+#             border: none;
+#             text-align: center;
+#             align-items: center;
+#             align-content: center;
+#             background-color: orange;
+#     }
+#     figure {
+#         border: none;
+#         text-align: center;
+#         display: inline;
+#     }
+#     figcaption {
+#         border: none;
+#         text-align: center;
+#     }
 # </style>
 
 # <codecell>
 
-from IPython.display import display, HTML
+from IPython.display import display, HTML, Image
+from wand.image import Image as WImage
+
 s = """
 
 <style>
@@ -43,7 +61,7 @@ s = """
 }
 
 .rendered_html li {
-    line-height: 1.5; 
+    line-height: 1.5;
 }
 
 .prompt {
@@ -89,12 +107,12 @@ h1.title {
 </style>
 """
 
-# display(HTML(s))
+display(HTML(s))
 
 # <markdowncell>
 
 # <center>
-# <h1 > Comprehensive Bifurcation Analysis in a <br>Neuromuscularly-Controlled In Vivo Canine Larynx <h1>
+# <h1 class='title'> Comprehensive Bifurcation Analysis in a <br>Neuromuscularly-Controlled In Vivo Canine Larynx </h1>
 # 
 # <h2 > Juergen Neubauer and Dinesh K. Chhetri </h2>
 # 
@@ -127,29 +145,87 @@ h1.title {
 
 # <markdowncell>
 
-# # Simple Idea: Do Bifurcation Analysis in an in vivo dog experiment!
+# # Wanted: 
+# 
+# ## Comprehensive exploration of solutions (dynamic behaviors) of a nonlinear dynamical system, here the vocal folds in the larynx
 
 # <markdowncell>
 
-# # Not so modest idea: Let's do it comprehensively and systematically!
+# # Wanted: 
+# 
+# ## Catalogue of complete dynamic behavior of vocal folds given a certain posture
 
 # <markdowncell>
 
-# # Why Bifurcation Analysis? And what's this all about? Give me an example!
+# # Why: 
+# ## Reveal basic mechanisms of neuromuscular control of F0, loudness, voice quality, etc.
+# ## Create framework to assess dynamic equivalence of different larynges (human, dog, bats, mammals, birds)
+# ## Use systematic experimental data for validation of models
 
 # <markdowncell>
 
-# # How does bifurcation analysis apply to an in vivo dog experiments? Who bifurcates and what are our control parameters?
+# # Simple Idea: Bifurcation Analysis in an in vivo dog experiment!
+# 
+# # Comprehensively and systematically!
+
+# <markdowncell>
+
+# # Why Bifurcation Analysis? And what's this all about? Example?
+# 
+# <center>
+# <img src="files/bifurcation.png" width=700 />
+# </center>
+
+# <markdowncell>
+
+# # Bifurcation analysis in an in vivo experiments? What bifurcates and what are control parameters?
 # 
 # ## muscles are actuators: deform larynx, determine the posture
 # ## laryngeal muscles set the tone (posture and stiffness) in terms of strain and stress that the subglottal pressure and flow can play with
 # ## We control the actuators (sort of) via the nerves connected to them: SLN, RLN, and branches of the RLN: TA, LCA/IA, PCA
 # 
+# <center>
+# <img src="files/postures.png" width=700 />
+# </center>
+
+# <markdowncell>
+
+# show kymogram with data overlays or on top of each other
+# 
+# show aphonia-Hopf bifurcation example
+# 
+# show spectrogram grid with data overlays
+# 
+# show strain data and vocal-process distance
+
+# <markdowncell>
+
 # # Demonstrate different neuromuscular stimulation scenarios: 
 # 
 # * left-right asymmetric stimulation of muscle groups
-# * left-right symmetric stimulation of different muscle groups
+# * left-right symmetric stimulation of different muscle groups: agonist-antagonist imbalance
 # * hemilarynx stimulation.
+
+# <codecell>
+
+F1 = WImage(filename = 'Figure1.pdf')
+F1alt = WImage(filename = 'Figure1_alt.pdf')
+
+# <markdowncell>
+
+# # Phonation frequency (F0) as a function of vocal fold length (strain) at phonation onset
+
+# <codecell>
+
+display(F1)
+
+# <markdowncell>
+
+# # Influence of TA activation
+
+# <codecell>
+
+display(F1alt)
 
 # <markdowncell>
 
@@ -172,52 +248,65 @@ h1.title {
 
 # <markdowncell>
 
-# # The Not-So-Simple Details: Tight Experimental Control!
+# # The Not-So-Simple Details: Tight Experimental Control! Fast and Automated Experimental Runs!
 # 
-# <center>
-# <div>
-# <h2> Controller
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 03-14, Dog Experiment CHS/DSC_0008.jpg" width=400 />
-# </h2>
-# <div>
-# <h2> In vivo dog model
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.jpg" width=400 />
-# </h2>
-# <div>
-# <h2> Extensive control and <br> recording infrastructure
-# <img src="files/ICVPB2014_Salt_Lake_City.images/cables.jpg" width=300 />
-# </h2>
+# <table>
+# <tr>
+# <td>
+# <figure>
+#     <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 03-14, Dog Experiment CHS/DSC_0008.jpg" width=600 />
+#     <figcaption>Controller</figcaption>
+# </figure>
+# </td>
+# <td>
+# <figure>
+#     <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.jpg" width=600 />
+#     <figcaption>In vivo dog model</figcaption>
+# </figure>
+# </td>
+# <td>
+# <figure>
+#     <img src="files/ICVPB2014_Salt_Lake_City.images/cables.jpg" width=600 />
+#     <figcaption>Extensive control and<br> recording infrastructure</figcaption>
 # <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-22, Dog experiment CHS/DSC_0001.jpg" width=300 />
 # -->
-# </center>
+# </figure>
+# </td>
+# </tr>
+# </table>
 
 # <markdowncell>
 
-# # Tight Experimental Control: Software abstraction enables management of experimental complexities
+# # In vivo dog experiment
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_nerve_settings.png" width=900 />
+# <img src="files/sketch_setup.png" width=700 />
 # </center>
 
 # <markdowncell>
 
-# # Tight Experimental Control:
+# # Software abstraction enables efficient and fast management of experimental complexities
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_nerve_settings.png" width=1000 />
+# </center>
+
+# <markdowncell>
+
+# # Nerve stimulation: 
 # 
-# ## nerve stimulation: tripolar cuff electrodes, inspired by Functional Electrical Stimulation (FES) community
-# 
-# ## stimulation pulse train: biphasic, charge-balanced, short-duration (30 microseconds per phase), rectangular
+# ## tripolar cuff electrodes, inspired by Functional Electrical Stimulation (FES) community
+# ## stimulation pulse trains: short rectangular biphasic, charge-balanced (30 microseconds per phase)
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-31/DSC_0005.jpg" width=500 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 10-17, Dog Experiment CHS/DSC_0008.jpg" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-31/DSC_0005.jpg" width=400 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 10-17, Dog Experiment CHS/DSC_0008.jpg" width=400 />
 # </center>
 
 # <markdowncell>
 
-# # Experimental Control:
-# 
+# # Humidified air important:
 # ## fully humidified and heated subglottal air flow, up to 1600 ml/s
-# ## no heat and humidification loss in heated supply hoses and subglottal expansion chamber
+# ## heated supply lines and subglottal expansion chamber: avoid heat and humidification loss
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-31/DSC_0003.jpg" width=500 />
@@ -226,7 +315,7 @@ h1.title {
 
 # <markdowncell>
 
-# ## primary experimental bifurcation parameter: air flow control
+# # Experimental bifurcation parameter: air flow rate control produces flow ramp
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-16, Dog Experiment CHS/DSC_0039.jpg" width=500 />
@@ -234,30 +323,33 @@ h1.title {
 
 # <markdowncell>
 
-# ## stimulation control
+# # Nerve stimulation control: Computer-controlled stimulation pulse trains
 # 
 # <center>
+# <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0004.jpg" width=500 />
+# -->
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0009.jpg" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_nerve_settings.png" width=500 />
 # </center>
 
 # <markdowncell>
 
-# ## stimulation current and voltage monitoring
+# # Monitoring nerve stimulation: injected current and voltage
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_current_voltage.png" width=700 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_current_voltage.png" width=1000 />
 # </center>
 
 # <markdowncell>
 
-# ## quick setup of controls: 
+# # Rapid setup of nerve stimulation parameters (up to 8 nerves): 
 # 
-# # binary search for threshold of nerve excitation
+# # Binary search for threshold of nerve excitation
 # # stimulation range finding verified by visual of posturing and transglottal pressure drop change
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/search_excitation_threshold.png" width=700 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/search_excitation_threshold.png" width=1000 />
 # </center>
 
 # <markdowncell>
@@ -273,7 +365,10 @@ h1.title {
 # ## EMG recordings for excitation threshold finding, range finding, and to answer questions about relative strength and speed of muscle response
 # 
 # <center>
+# <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.jpg" width=500 />
+# -->
+# <img src="files/EMGtraces_09.png" width=800 />
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0011.jpg" width=500 />
 # </center>
 
@@ -306,8 +401,5 @@ _ = plt.plot([1,2,3])
 # ## Monitor controls in realtime and offline
 # 
 # ## Repeat experiments show comparable bifurcation scenarios
-# ## Bifurcations induced by asymmetric stimulation conditions or imbalance of agonist-antagonist muscle actions
-
-# <codecell>
-
+# ## Bifurcations induced and altered by asymmetric stimulation conditions or imbalance of agonist-antagonist muscle actions
 

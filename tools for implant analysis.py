@@ -271,6 +271,72 @@ def plotonsetdata(implant_vagal, name_paralysis = 'vagal nerve paralysis', F0_no
 
 # <codecell>
 
+# savevarnames = ['phase lead', 'mucosal amp', 'vibratory amp']
+
+def plotsymmetry(TAasymmetry, symvars = ['phase lead', 'mucosal amp', 'vibratory amp'], name_paralysis = 'TA asymmetry'):
+
+    symmetry_cmap = mpl.colors.ListedColormap(['b', 'c', 'g', 'orange', 'r'])
+    symmetry_cmap.set_under(color = 'k')
+    symmetry_cmap.set_over(color = 'gray')
+
+    plt.close('all')
+    
+    for casename in TAasymmetry:
+        xlabel = TAasymmetry[casename]['nerve_xaxis']
+        ylabel = TAasymmetry[casename]['nerve_yaxis']
+        
+        for varname in symvars:
+
+            var = TAasymmetry[casename]['onset ' + varname]
+
+            fig, ax = plt.subplots(# figsize = ()
+                                   )
+            axim = ax.imshow(var, cmap = symmetry_cmap, vmin = -1, vmax = 1)
+
+            Nlevel = int(np.sqrt(TAasymmetry[casename]['Nstimulation']) - 1)
+
+            ax.plot([-0.5, Nlevel + 0.5], [-0.5, Nlevel + 0.5], 'k-')
+
+            ax.axis([-0.5, Nlevel + 0.5, -0.5, Nlevel + 0.5])
+
+            ax.set_xticks(range(Nlevel+1))
+            ax.set_yticks(range(Nlevel+1))
+
+            for xmaj in ax.xaxis.get_majorticklocs():
+                ax.axvline(x = xmaj + 0.5, ls = ':', color = 'k', lw = 1, marker = 'None')
+
+            for ymaj in ax.yaxis.get_majorticklocs():
+                ax.axhline(y = ymaj + 0.5, ls = ':', color = 'k', lw = 1, marker = 'None')
+            
+            plt.grid(False)
+            
+            plt.title("{}: {}".format(casename, varname))
+            
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            
+            cb = plt.colorbar(axim, ax = ax, extend = 'both')
+            cb.solids.set_edgecolor('face')
+            cb.set_label(varname)
+            
+            cb.set_ticks([-0.6, 0, 0.6])
+            cb.set_ticklabels(['left', 'symmetric', 'right'])
+            
+            ytl = cb.ax.get_yticklabels()
+            for text in ytl:
+                text.set_rotation(90)
+
+            plt.title("%s: %s" % (name_paralysis, casename))
+            
+            savename = "{}.{}.{}.pdf".format(name_paralysis.replace(' ', '_'), 
+                                             varname.replace(' ', '_'), 
+                                             casename)
+            
+            plt.savefig(savename, 
+                        orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
+
+# <codecell>
+
 def Bernoulli_Power(implant_recurrens):
     for casename in implant_recurrens:
         ps = implant_recurrens[casename]['ps_onset']
