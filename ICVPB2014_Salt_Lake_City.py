@@ -7,6 +7,7 @@
 #     .input, .output_prompt {
 #             display:none !important;
 #     }
+#     
 #     table, th, tr, td {
 #             border: none;
 #             text-align: center;
@@ -14,11 +15,13 @@
 #             align-content: center;
 #             background-color: orange;
 #     }
+#     
 #     figure {
 #         border: none;
 #         text-align: center;
 #         display: inline;
 #     }
+#     
 #     figcaption {
 #         border: none;
 #         text-align: center;
@@ -33,6 +36,12 @@ from wand.image import Image as WImage
 s = """
 
 <style>
+
+div.cell, div.text_cell_render {
+        width:100%;
+        margin-left:1%;
+        margin-right:auto;
+}
 
 .rendered_html {
     font-family: "proxima-nova", helvetica;
@@ -61,6 +70,7 @@ s = """
 }
 
 .rendered_html li {
+    font-size: 120%
     line-height: 1.5;
 }
 
@@ -104,6 +114,13 @@ h1.title {
     font-size: 250%;
 }
 
+# div.cell{
+#         max-width:750px;
+#         margin-left:auto;
+#         margin-right:auto;
+# }
+
+
 </style>
 """
 
@@ -120,7 +137,7 @@ display(HTML(s))
 # 
 # <h4 > ICVPB Salt Lake City, 2014 </h4>
 # 
-# <h4> Supported by NIH R01 xyz</h4>
+# <h4> Supported by NIH RO1 DC011300</h4>
 # </center>
 
 # <markdowncell>
@@ -145,19 +162,19 @@ display(HTML(s))
 
 # <markdowncell>
 
-# # Wanted: 
+# # Wanted
 # 
-# ## Comprehensive exploration of solutions (dynamic behaviors) of a nonlinear dynamical system, here the vocal folds in the larynx
+# ## Comprehensive study of solutions (dynamic behaviors) of a nonlinear dynamical system, the vocal folds in the larynx
 
 # <markdowncell>
 
-# # Wanted: 
+# # Wanted
 # 
-# ## Catalogue of complete dynamic behavior of vocal folds given a certain posture
+# ## Catalog of complete dynamic behavior of vocal folds as a function of glottal posture
 
 # <markdowncell>
 
-# # Why: 
+# # Why
 # ## Reveal basic mechanisms of neuromuscular control of F0, loudness, voice quality, etc.
 # ## Create framework to assess dynamic equivalence of different larynges (human, dog, bats, mammals, birds)
 # ## Use systematic experimental data for validation of models
@@ -170,51 +187,78 @@ display(HTML(s))
 
 # <markdowncell>
 
-# # Why Bifurcation Analysis? And what's this all about? Example?
+# # Bifurcation Analysis in In Vivo Dog
+# 
+# ## Phonation onset is an important bifurcation
 # 
 # <center>
-# <img src="files/bifurcation.png" width=700 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/bifurcation.png" width=900 />
 # </center>
 
 # <markdowncell>
 
-# # Bifurcation analysis in an in vivo experiments? What bifurcates and what are control parameters?
+# # Types of bifurcations and nonlinear phenomena
 # 
-# ## muscles are actuators: deform larynx, determine the posture
-# ## laryngeal muscles set the tone (posture and stiffness) in terms of strain and stress that the subglottal pressure and flow can play with
-# ## We control the actuators (sort of) via the nerves connected to them: SLN, RLN, and branches of the RLN: TA, LCA/IA, PCA
+# ## Hopf bifurcation (e.g. phonation onset)
+# ## Subharmonic bifurcations; folded limit cycle oscillations
+# ## Frequency jumps: chest -- falsetto register transition
+# ## Secondary Hopf bifurcation; toroidal oscillation -- biphonation
+# ## Bifurcations to chaotic vibrations
+
+# <markdowncell>
+
+# # Parameters of Bifurcation analysis in an in vivo experiments
+# 
+# ## Muscles are actuators: deform larynx, determine the posture
+# ## Laryngeal muscles set the tone (posture and stiffness) in terms of strain and stress that the subglottal pressure and flow can play with
+# ## Control the actuators via their connected nerves: SLN, RLN, and branches of the RLN (TA, LCA/IA, PCA)
 # 
 # <center>
-# <img src="files/postures.png" width=500 />
-# <img src="files/TAatOnset.png" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/postures.png" width=800 />
 # </center>
 
 # <markdowncell>
 
-# show kymogram with data overlays or on top of each other
+# ToDo:
 # 
-# show aphonia-Hopf bifurcation example
+# show kymogram with data overlays or on top of each other: highlight the POSTURE and the VIBRATION in the high speed video
 # 
-# show spectrogram grid with data overlays
 # 
 # show strain data and vocal-process distance
+# 
+# NO hemilarynx
 
 # <markdowncell>
 
-# # Demonstrate different neuromuscular stimulation scenarios: 
+# # Neuromuscular stimulation scenarios
 # 
-# * left-right asymmetric stimulation of muscle groups
-# * left-right symmetric stimulation of different muscle groups: agonist-antagonist imbalance
-# * hemilarynx stimulation.
+# ## Left-Right Asymmetric stimulation of muscle groups (e.g. left versus right TA)
+# ## Agonist-Antagonist imbalance -- Left-Right Symmetric stimulation of different muscle groups (e.g. SLN versus TA)
+
+# <markdowncell>
+
+# # Example: asymmetric SLN for constant mid RLN
+# 
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/asymmetricSLN_MidRLN.pout.specgram.600Hz.png" width=1000 />
+# </center>
+
+# <markdowncell>
+
+# # Example: trunk RLN versus TA for constant (no) SLN
+# 
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/trunkRLN_TA_NoSLN Wed Mar 21 2012 17 18 17.psub.specgram.1000Hz.mod.png" width=1000 />
+# </center>
+
+# <markdowncell>
+
+# # Phonation onset: Phonation frequency (F0) -- vocal fold length (strain)
 
 # <codecell>
 
 F1 = WImage(filename = 'Figure1.pdf')
 F1alt = WImage(filename = 'Figure1_alt.pdf')
-
-# <markdowncell>
-
-# # Phonation frequency (F0) as a function of vocal fold length (strain) at phonation onset
 
 # <codecell>
 
@@ -222,7 +266,7 @@ display(F1)
 
 # <markdowncell>
 
-# # Influence of TA activation
+# # Detail: Influence of TA activation
 
 # <codecell>
 
@@ -230,22 +274,51 @@ display(F1alt)
 
 # <markdowncell>
 
-# # What do we get from it? What can we do with it? How does it look like?
+# # Example: SLN versus trunk RLN for different TA
 # 
-# ## Different kinds of bifurcations and nonlinear phenomena: 
+# ## High speed video recording: glottal posturing and vocal fold vibration
 # 
-# - Hopf bifurcation (e.g. phonation onset)
-# - cascades of subharmonic bifurcations; folded limit cycle oscillations
-# - frequency jumps (chest - falsetto); secondary Hopf bifurcations
-# - bifurcations to chaotic vibrations
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/TAatOnset.mod.png" width=1000 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN_trunkRLN_DifferentTA.kymoim.mod.png" width=1000 />
+# </center>
+
+# <markdowncell>
+
+# # Example: Repeat Experiments
+# ## Left Vagal Paralysis: Right SLN versus Right RLN
 # 
-# ## Idea: Use the bifurcation behavior as a dynamical metric to compare:
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/right SLN versus right RLN baseline no implant Wed Oct 30 2013 16 25 51.pout.specgram.1000Hz.mod.png" width=450 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/right SLN versus right RLN no implant baseline repeat Wed Oct 30 2013 17 47 30.pout.specgram.1000Hz.mod.png" width=450 />
+# </center>
+
+# <markdowncell>
+
+# # Repeat Experiments
 # 
-# * different larynges: human, dog, sheep, etc: Are they dynamically equivalent?
-# * different intervention procedures for voice pathologies: implants, arytenoid adduction, augmentation, mass injection
-# * severity of paresis (muscle weakness) in terms of dynamical effects
+# ## Left Recurrent Nerve Paralysis: SLN versus right RLN
 # 
-# ## Eventually: catalogue of dynamical behaviors to infer INTERNAL laryngeal state from kinematic and dynamic behavior
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant Wed Oct 30 2013 14 52 50.pout.specgram.1000Hz.mod.png" width=450 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant repeat Wed Oct 30 2013 16 05 22.pout.specgram.1000Hz.mod.png" width=450 />
+# </center>
+
+# <markdowncell>
+
+# # Use the bifurcation behavior as a metric to compare different dynamical systems:
+# 
+# ## Different larynges: human, dog, sheep, etc: Are they dynamically equivalent?
+# ## Different intervention procedures for voice pathologies: implants, arytenoid adduction, augmentation, mass injection
+# ## Different grades of paresis/paralysis (muscle weakness)
+
+# <markdowncell>
+
+# # Goal: Systematic Catalog of dynamical behaviors as a function of posture and stimulation level
+
+# <markdowncell>
+
+# ## to infer INTERNAL laryngeal state from kinematic and dynamic behavior
 
 # <markdowncell>
 
@@ -255,19 +328,19 @@ display(F1alt)
 # <tr>
 # <td>
 # <figure>
-#     <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 03-14, Dog Experiment CHS/DSC_0008.jpg" width=600 />
+#     <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 03-14, Dog Experiment CHS/DSC_0008.mod.png" width=600 />
 #     <figcaption>Controller</figcaption>
 # </figure>
 # </td>
 # <td>
 # <figure>
-#     <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.jpg" width=600 />
+#     <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.mod.png" width=600 />
 #     <figcaption>In vivo dog model</figcaption>
 # </figure>
 # </td>
 # <td>
 # <figure>
-#     <img src="files/ICVPB2014_Salt_Lake_City.images/cables.jpg" width=600 />
+#     <img src="files/ICVPB2014_Salt_Lake_City.images/cables.mod.png" width=600 />
 #     <figcaption>Extensive control and<br> recording infrastructure</figcaption>
 # <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-22, Dog experiment CHS/DSC_0001.jpg" width=300 />
@@ -281,62 +354,72 @@ display(F1alt)
 
 # # In vivo dog experiment
 # <center>
-# <img src="files/sketch_setup.png" width=700 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/sketch_setup.png" width=700 />
 # </center>
 
 # <markdowncell>
 
-# # Software abstraction enables efficient and fast management of experimental complexities
+# # Software abstraction and automation
+# ## Efficient and fast management of experimental complexities
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_nerve_settings.png" width=1000 />
 # </center>
 
 # <markdowncell>
 
-# # Nerve stimulation: 
+# # Laryngeal Nerve Stimulation
 # 
-# ## tripolar cuff electrodes, inspired by Functional Electrical Stimulation (FES) community
-# ## stimulation pulse trains: short rectangular biphasic, charge-balanced (30 microseconds per phase)
+# ## Tripolar Cuff Electrodes, used in Functional Electrical Stimulation (FES)
+# ## Stimulation Pulse Trains: short, rectangular, biphasic, charge-balanced (30 microseconds per phase)
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-31/DSC_0005.jpg" width=400 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-31/DSC_0005.mod.png" width=400 />
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 10-17, Dog Experiment CHS/DSC_0008.jpg" width=400 />
 # </center>
 
 # <markdowncell>
 
-# # Humidified air important:
-# ## fully humidified and heated subglottal air flow, up to 1600 ml/s
-# ## heated supply lines and subglottal expansion chamber: avoid heat and humidification loss
+# # Humidified glottal air flow
+# ## Fully humidified and heated subglottal air flow, up to 1600 ml/s
+# ## Heated supply lines and subglottal expansion chamber: avoid heat and humidification loss
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-31/DSC_0003.jpg" width=500 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-16, Dog Experiment CHS/DSC_0052.jpg" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-31/DSC_0003.mod.png" width=450 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-16, Dog Experiment CHS/DSC_0052.mod.png" width=450 />
+# <!--
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-16, Dog Experiment CHS/DSC_0056.mod.png" width=500 />
+# -->
 # </center>
 
 # <markdowncell>
 
-# # Experimental bifurcation parameter: air flow rate control produces flow ramp
+# # Experimental bifurcation parameter
+# 
+# ## Computer-controlled linear flow ramp -- Increasing subglottal pressure
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-16, Dog Experiment CHS/DSC_0039.jpg" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-16, Dog Experiment CHS/DSC_0039.mod.png" width=800 />
 # </center>
 
 # <markdowncell>
 
-# # Nerve stimulation control: Computer-controlled stimulation pulse trains
+# # Nerve stimulation control (up to 8 nerves)
+# 
+# ## Computer-controlled and automated stimulation pulse train sequences
 # 
 # <center>
 # <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0004.jpg" width=500 />
 # -->
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0009.jpg" width=500 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_nerve_settings.png" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0009.mod.png" width=700 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_nerve_settings.png" width=700 />
 # </center>
 
 # <markdowncell>
 
-# # Monitoring nerve stimulation: injected current and voltage
+# # Electrode-nerve interface monitoring
+# 
+# ## Detect current shunting and impedance changes by monitoring injected current and voltage
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_current_voltage.png" width=1000 />
@@ -346,14 +429,14 @@ display(F1alt)
 
 # # Rapid setup of nerve stimulation parameters (up to 8 nerves): 
 # 
-# # Binary search for threshold of nerve excitation
-# # stimulation range finding verified by visual of posturing and transglottal pressure drop change
+# ## Binary search for threshold of nerve excitation (one threshold in 10 seconds)
+# ## Stimulation range finding assisted by visual of posturing and transglottal pressure drop change
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/search_excitation_threshold.png" width=1000 />
 # </center>
 
-# <markdowncell>
+# <rawcell>
 
 # ## exploit diagnostic tools for range finding: subglottal pressure for constant flow rate
 # 
@@ -363,24 +446,32 @@ display(F1alt)
 
 # <markdowncell>
 
-# ## EMG recordings for excitation threshold finding, range finding, and to answer questions about relative strength and speed of muscle response
+# # EMG of Laryngeal Muscles
+# 
+# ## Excitation threshold finding, Stimulation range finding
+# ## Measure relative strength and speed of muscle response (medial, lateral TA, CT, LCA)
+# ## Study impact of pulse train parameters: pulse repetition rate, pulse shape
 # 
 # <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/EMGtraces_09.png" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0011.mod.png" width=400 />
+# 
 # <!--
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.jpg" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.mod.png" width=450 />
 # -->
-# <img src="files/EMGtraces_09.png" width=800 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0011.jpg" width=500 />
+# 
 # </center>
 
 # <markdowncell>
 
-# # Need for Speed: A new recording every 5 seconds
+# # Need for Speed: A recording every 5 seconds
 # 
-# ## entire set of 64 stimulation conditions recorded in 5 minutes and 20 seconds!
+# ## High speed motion capture includes prephonatory posturing and vocal fold vibration
+# ## 5 minutes to record a comprehensive, systematic set of 64 stimulation conditions
+# ## Stimulation range finding and checks also recorded: single nerve stimulation ramps
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-22, Dog experiment CHS/DSC_0008.jpg" width=500 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-22, Dog experiment CHS/DSC_0008.mod.png" width=800 />
 # </center>
 
 # <codecell>
@@ -397,10 +488,14 @@ _ = plt.plot([1,2,3])
 # # Summary
 # 
 # ## Collect systematic data on kinematic and dynamic behavior of neuro-muscular model of a mammalian larynx
+# 
 # ## Parameterize vocal posture via laryngeal nerve stimulation
+# 
 # ## Perform fast setup and experimental runs for consistent dynamic behavior
+# 
 # ## Monitor controls in realtime and offline
 # 
-# ## Repeat experiments show comparable bifurcation scenarios
-# ## Bifurcations induced and altered by asymmetric stimulation conditions or imbalance of agonist-antagonist muscle actions
+# ## Repeat experiments show comparable robust bifurcation scenarios
+# 
+# ## Bifurcations due to: Left-Right Asymmetries; Agonist-Antagonist Muscle Imbalance
 
