@@ -472,6 +472,7 @@ display(F1alt)
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-22, Dog experiment CHS/DSC_0008.mod.png" width=800 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 03-14, Dog Experiment CHS/DSC_0005.mod.png" width=800 />
 # </center>
 
 # <codecell>
