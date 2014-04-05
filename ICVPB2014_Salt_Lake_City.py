@@ -189,7 +189,7 @@ display(HTML(s))
 
 # # Bifurcation Analysis in In Vivo Dog
 # 
-# ## Phonation onset is an important bifurcation
+# ## Phonation onset (Hopf bifurcation) during air flow ramp
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/bifurcation.png" width=900 />
@@ -207,7 +207,7 @@ display(HTML(s))
 
 # <markdowncell>
 
-# # Parameters of Bifurcation analysis in an in vivo experiments
+# # Neuromuscular Control Parameters
 # 
 # ## Muscles are actuators: deform larynx, determine the posture
 # ## Laryngeal muscles set the tone (posture and stiffness) in terms of strain and stress that the subglottal pressure and flow can play with
