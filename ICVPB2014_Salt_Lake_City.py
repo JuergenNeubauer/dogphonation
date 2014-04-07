@@ -33,99 +33,102 @@
 from IPython.display import display, HTML, Image
 from wand.image import Image as WImage
 
-s = """
+# <rawcell>
 
-<style>
-
-div.cell, div.text_cell_render {
-        width:100%;
-        margin-left:1%;
-        margin-right:auto;
-}
-
-.rendered_html {
-    font-family: "proxima-nova", helvetica;
-    font-size: 150%;
-    line-height: 1.3;
-}
-
-.rendered_html h1 {
-    margin: 0.25em 0em 0.5em;
-    # color: #015C9C;
-    color: darkviolet;
-    text-align: center;
-    line-height: 1.2; 
-    page-break-before: always;
-}
-
-.rendered_html h2 {
-    margin: 1.1em 0em 0.5em;
-    color: #26465D;
-    line-height: 1.2;
-}
-
-.rendered_html h3 {
-    margin: 1.1em 0em 0.5em;
-    color: #002845;
-    line-height: 1.2;
-}
-
-.rendered_html li {
-    font-size: 120%
-    line-height: 1.5;
-}
-
-.prompt {
-    font-size: 120%; 
-}
-
-.CodeMirror-lines {
-    font-size: 120%; 
-}
-
-.output_area {
-    font-size: 120%; 
-}
-
-#notebook {
-#     background-image: url('files/images/witewall_3.png');
-# }
-
-h1.bigtitle {
-    margin: 4cm 1cm 4cm 1cm;
-    font-size: 300%;
-}
-
-h3.point {
-    font-size: 200%;
-    text-align: center;
-    margin: 2em 0em 2em 0em;
-    #26465D
-}
-
-.logo {
-    margin: 20px 0 20px 0;
-}
-
-a.anchor-link {
-    display: none;
-}
-
-h1.title { 
-    font-size: 200%;
-}
-
-# div.cell{
-#         max-width:750px;
-#         margin-left:auto;
+# s = """
+# 
+# <style>
+# 
+# div.cell, div.text_cell_render {
+#         width:100%;
+#         margin-left:1%;
 #         margin-right:auto;
 # }
-
-
-</style>
-"""
-
-display(HTML(s))
+# 
+# .rendered_html {
+#     font-family: "proxima-nova", helvetica;
+#     font-size: 150%;
+#     line-height: 1.3;
+# }
+# 
+# .rendered_html h1 {
+#     margin: 0.25em 0em 0.5em;
+#     # color: #015C9C;
+#     color: #CC3300;
+#     text-align: center;
+#     line-height: 1.2; 
+#     page-break-before: always;
+#     font-size: 250%;
+# }
+# 
+# .rendered_html h2 {
+#     margin: 1.1em 0em 0.5em;
+#     color: black;
+#     line-height: 1.2;
+# }
+# 
+# .rendered_html h3 {
+#     margin: 1.1em 0em 0.5em;
+#     color: black;
+#     line-height: 1.2;
+# }
+# 
+# .rendered_html li {
+#     font-size: 120%
+#     line-height: 1.5;
+# }
+# 
+# .prompt {
+#     font-size: 120%; 
+# }
+# 
+# .CodeMirror-lines {
+#     font-size: 120%; 
+# }
+# 
+# .output_area {
+#     font-size: 120%; 
+# }
+# 
+# #notebook {
+# #     background-image: url('files/images/witewall_3.png');
+# # }
+# 
+# h1.bigtitle {
+#     margin: 4cm 1cm 4cm 1cm;
+#     font-size: 300%;
+# }
+# 
+# h3.point {
+#     font-size: 200%;
+#     text-align: center;
+#     margin: 2em 0em 2em 0em;
+#     color: #26465D;
+# }
+# 
+# .logo {
+#     margin: 20px 0 20px 0;
+# }
+# 
+# a.anchor-link {
+#     display: none;
+# }
+# 
+# h1.title { 
+#     font-size: 250%;
+# }
+# 
+# # div.cell{
+# #         max-width:750px;
+# #         margin-left:auto;
+# #         margin-right:auto;
+# # }
+# 
+# 
+# </style>
+# """
+# 
+# display(HTML(s))
 
 # <markdowncell>
 
@@ -255,23 +258,31 @@ display(HTML(s))
 # <markdowncell>
 
 # # Phonation onset: Phonation frequency (F0) -- vocal fold length (strain)
+# 
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1.png" width=600 />
+# </center>
 
-# <codecell>
+# <rawcell>
 
-F1 = WImage(filename = 'Figure1.pdf')
-F1alt = WImage(filename = 'Figure1_alt.pdf')
+# F1 = WImage(filename = 'Figure1.pdf')
+# F1alt = WImage(filename = 'Figure1_alt.pdf')
 
-# <codecell>
+# <rawcell>
 
-display(F1)
+# display(F1)
 
 # <markdowncell>
 
 # # Detail: Influence of TA activation
+# 
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1_alt.png" width=600 />
+# </center>
 
-# <codecell>
+# <rawcell>
 
-display(F1alt)
+# display(F1alt)
 
 # <markdowncell>
 
@@ -481,14 +492,14 @@ display(F1alt)
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 03-14, Dog Experiment CHS/DSC_0005.mod.png" width=800 />
 # </center>
 
-# <codecell>
+# <rawcell>
 
-%matplotlib inline
+# %matplotlib inline
 
-# <codecell>
+# <rawcell>
 
-import matplotlib.pyplot as plt
-_ = plt.plot([1,2,3])
+# import matplotlib.pyplot as plt
+# _ = plt.plot([1,2,3])
 
 # <markdowncell>
 
