@@ -23,7 +23,7 @@ ls -alot $xlsdir/*.xls*
 
 # <codecell>
 
-book = xlrd.open_workbook(filename = os.path.join(xlsdir, 'DONE 5.23.12.withphase.xlsx'))
+book = xlrd.open_workbook(filename = os.path.join(xlsdir, 'DONE 5.23.12.corrected.xlsx'))
 
 # <codecell>
 
@@ -63,6 +63,8 @@ print Nstimulations
 TAasymmetry = {casename: dict(Nstimulation = Nstimulation) for (casename, Nstimulation) in zip(casenames, Nstimulations)}
 
 # <codecell>
+
+# misspelling of 'Vibatory' is intentional
 
 varnames = ['Onset Time (sample)', '#Peaks', 'Elapsed Time (samples)', 'Phase Lead', 'Mucosal Amplitude', 'Vibatory Amplitude']
 datavar = {varname: {} for varname in varnames}
@@ -179,6 +181,10 @@ for casename in casenames:
 
 # <codecell>
 
+TAasymmetry
+
+# <codecell>
+
 basedir = "/extra/InVivoDog/InVivoDog_2012_05_23"
 
 expname = "asymmetricTA"
@@ -194,7 +200,7 @@ for casename in casenames:
     
     fullpath = os.path.join(basedir, hdf5path)
     print fullpath
-    print os.path.isdir(fullpath)
+    print 'path exists? ', os.path.isdir(fullpath)
     
     print glob.glob(fullpath + '/*.hdf5')
     
@@ -354,7 +360,10 @@ plotsymmetry(TAasymmetry, symvars = savevarnames, name_paralysis = 'TAasymmetry'
 
 # <codecell>
 
-plotonsetdata(TAasymmetry, name_paralysis = 'TAasymmetry', F0_normalized = False, ps_normalized = False, Q_normalized = False)
+plotonsetdata(TAasymmetry, name_paralysis = 'TAasymmetry', 
+              F0_normalized = True, 
+              ps_normalized = True, 
+              Q_normalized = True)
 
 # <codecell>
 
@@ -362,7 +371,7 @@ plotonsetdata(TAasymmetry, name_paralysis = 'TAasymmetry', F0_normalized = False
 
 # <codecell>
 
-scatterplot(TAasymmetry, casenames, title = 'TA asymmetry')
+scatterplot(TAasymmetry, casenames, title = 'TAasymmetry')
 
 # <codecell>
 
@@ -386,4 +395,252 @@ plt.show()
 
 # <codecell>
 
+# landmarks at rest and onset clicked by Eli
+# if onset didn't occur, used the last frame in recording
+# see strainanalysis.py
+landmarkdir = "/extra/InVivoDog/Elazar/results/05_23_2012_asymmetricTA/"
+
+print "%s exists? " % landmarkdir, os.path.isdir(landmarkdir)
+
+# <codecell>
+
+!ls -alot $landmarkdir
+
+# <codecell>
+
+casenames
+
+# <codecell>
+
+video_casenames = ['NoSLN NoRLN', 'NoSLN MaxRLN', 'MaxSLN MaxRLN']
+
+# <codecell>
+
+clickfiles = dict()
+
+for casename, videocasename in zip(casenames, video_casenames):
+    clickfiles[casename] = sorted(glob.glob(os.path.join(landmarkdir, '*{}*.npz'.format(videocasename))))
+
+# <codecell>
+
+clickfiles
+
+# <codecell>
+
+def distances(clickdata):
+    # baseline vectors between anterior landmark and VP on left and right sides
+    vlr_clickdata = clickdata[1:] - clickdata[0]
+    # vector between left and right VPs
+    dx_clickdata = clickdata[1] - clickdata[2]
+    
+    # baseline lengths
+    l_clickdata = np.hypot(vlr_clickdata[:, 0], vlr_clickdata[:, 1])
+    d_clickdata = np.hypot(dx_clickdata[0], dx_clickdata[1])
+    
+    return l_clickdata, d_clickdata
+
+# <codecell>
+
+strainvarnames = ['lstrain', 'rstrain', 'dVP']
+
+for casename in casenames:
+    print casename
+    
+    strains = []
+    stimlevelindex = []
+    
+    for clickfile in clickfiles[casename]:
+        data = np.load(clickfile)
+        
+        baseline = data['baseline_pos']
+        onset = data['onset_pos']
+        stimlevelindex.append(data['stimlevelindex'].tolist())
+
+        l_baseline, d_baseline = distances(baseline)
+        l_onset, d_onset = distances(onset)
+        
+        leftstrain, rightstrain = (l_onset - l_baseline) / l_baseline * 100.0
+        # dVPrel = (d_onset - d_baseline) / d_baseline * 100.0
+        dVPrel = d_onset / d_baseline * 100.0
+        
+        if np.any(np.isnan([leftstrain, rightstrain, dVPrel])):
+            print 'clickfile: ', clickfile
+            for item in data.files:
+                print "{}: {}".format(item, data[item])
+            print
+                
+        strains.append([leftstrain, rightstrain, dVPrel])
+            
+    leftstrain = [item[0] for item in strains]
+    rightstrain = [item[1] for item in strains]
+    dVPrel = [item[2] for item in strains]
+            
+    stimind = TAasymmetry[casename]['stimind'].astype(np.int)
+    
+    strainlists = [leftstrain, rightstrain, dVPrel]
+    
+    for savevarname, strainlist in zip(strainvarnames, strainlists):
+        TAasymmetry[casename].update({savevarname: np.array(strainlist)[stimind]})
+
+# <codecell>
+
+TAasymmetry
+
+# <codecell>
+
+def plotstrains(TAasymmetry, name_paralysis = 'TAasymmetry', normalized = True):
+    
+    min_lstrain = np.nanmin([np.nanmin(TAasymmetry[casename]['lstrain']) for casename in TAasymmetry])
+    max_lstrain = np.nanmax([np.nanmax(TAasymmetry[casename]['lstrain']) for casename in TAasymmetry])
+    
+    print "min_lstrain: {}, max_lstrain: {}".format(min_lstrain, max_lstrain)
+    
+    min_rstrain = np.nanmin([np.nanmin(TAasymmetry[casename]['rstrain']) for casename in TAasymmetry])
+    max_rstrain = np.nanmax([np.nanmax(TAasymmetry[casename]['rstrain']) for casename in TAasymmetry])
+    
+    print "min_rstrain: {}, max_rstrain: {}".format(min_rstrain, max_rstrain)
+    
+    min_dVP = np.nanmin([np.nanmin(TAasymmetry[casename]['dVP']) for casename in TAasymmetry])
+    max_dVP = np.nanmax([np.nanmax(TAasymmetry[casename]['dVP']) for casename in TAasymmetry])
+    
+    print "min_dVP: {}, max_dVP: {}".format(min_dVP, max_dVP)
+    
+    plt.close('all')
+    
+    for casename in TAasymmetry:
+        xlabel = TAasymmetry[casename]['nerve_xaxis']
+        ylabel = TAasymmetry[casename]['nerve_yaxis']
+        
+        lstrain = TAasymmetry[casename]['lstrain']
+        rstrain = TAasymmetry[casename]['rstrain']
+        dVP = TAasymmetry[casename]['dVP']
+        
+        ################################################################################################
+        
+        try:
+            plt.clf()
+        except:
+            pass
+        
+        plt.imshow(lstrain)
+        
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        
+        textnorm = ''
+        if normalized:
+            plt.clim(vmin = min_lstrain, vmax = max_lstrain)
+            textnorm = '.Normalized'
+            
+        plt.title("{}: {}".format(name_paralysis, casename))
+        
+        cb = plt.colorbar()
+        cb.set_label('left strain [%]')
+        
+        plt.grid(False)
+    
+        savename = "{}.lstrain{}.{}.pdf".format(name_paralysis.replace(' ', '_'), textnorm, casename)
+        
+        plt.savefig(savename, orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
+        
+        ################################################################################################
+        
+        plt.clf()
+        
+        plt.imshow(rstrain)
+        
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        
+        textnorm = ''
+        if normalized:
+            plt.clim(vmin = min_rstrain, vmax = max_rstrain)
+            textnorm = '.Normalized'
+            
+        plt.title("{}: {}".format(name_paralysis, casename))
+        
+        cb = plt.colorbar()
+        cb.set_label('right strain [%]')
+        
+        plt.grid(False)
+    
+        savename = "{}.rstrain{}.{}.pdf".format(name_paralysis.replace(' ', '_'), textnorm, casename)
+        
+        plt.savefig(savename, orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
+    
+        ################################################################################################
+        
+        plt.clf()
+        
+        plt.imshow(dVP)
+        
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        
+        textnorm = ''
+        if normalized:
+            plt.clim(vmin = min_dVP, vmax = max_dVP)
+            textnorm = '.Normalized'
+            
+        plt.title("{}: {}".format(name_paralysis, casename))
+        
+        cb = plt.colorbar()
+        cb.set_label('Dvp [%]')
+        
+        plt.grid(False)
+    
+        savename = "{}.dVP{}.{}.pdf".format(name_paralysis.replace(' ', '_'), textnorm, casename)
+        
+        plt.savefig(savename, orientation = 'landscape', bbox_inches = 'tight', pad_inches = 0.1)
+
+# <codecell>
+
+plotstrains(TAasymmetry, name_paralysis = 'TAasymmetry', normalized = False)
+
+# <codecell>
+
+TAasymmetry['noSLN noRLN']['lstrain']
+
+# <codecell>
+
+allF0 = np.hstack([TAasymmetry[casename]['F0'].ravel() for casename in casenames])
+allA = np.hstack([TAasymmetry[casename]['A_onset'].ravel() for casename in casenames])
+allP = np.hstack([TAasymmetry[casename]['P_onset'].ravel() for casename in casenames])
+
+allps = np.hstack([TAasymmetry[casename]['ps_onset'].ravel() for casename in casenames])
+allQ = np.hstack([TAasymmetry[casename]['Q_onset'].ravel() for casename in casenames])
+
+alllstrain = np.hstack([TAasymmetry[casename]['lstrain'].ravel() for casename in casenames])
+allrstrain = np.hstack([TAasymmetry[casename]['rstrain'].ravel() for casename in casenames])
+alldVP = np.hstack([TAasymmetry[casename]['dVP'].ravel() for casename in casenames])
+
+# <codecell>
+
+plt.close('all')
+
+scatter = plt.scatter(alllstrain, allF0, s = 100, c = alldVP, alpha = 0.7)
+
+plt.xlabel('left strain [%]')
+plt.ylabel('F0 [Hz]')
+
+cb = plt.colorbar(mappable = scatter)
+cb.set_label('Dvp [%]')
+
+plt.xlim(-10, 25)
+plt.ylim(0, 500)
+
+plt.savefig('TAasymmetry.F0-strain_Dvp.pdf', orientation = 'landscape', bbox_inches = 'tight')
+
+plt.show()
+
+# <codecell>
+
+plt.close('all')
+
+plt.scatter(allA**(5/2.) * allF0**3, allP, s = allF0, c = allF0)
+
+plt.xlabel('A')
+plt.ylabel('P')
+
+plt.show()
 

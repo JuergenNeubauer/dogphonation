@@ -51,7 +51,8 @@ div.cell, div.text_cell_render {
 
 .rendered_html h1 {
     margin: 0.25em 0em 0.5em;
-    color: #015C9C;
+    # color: #015C9C;
+    color: darkviolet;
     text-align: center;
     line-height: 1.2; 
     page-break-before: always;
@@ -111,7 +112,7 @@ a.anchor-link {
 }
 
 h1.title { 
-    font-size: 250%;
+    font-size: 200%;
 }
 
 # div.cell{
@@ -129,7 +130,7 @@ display(HTML(s))
 # <markdowncell>
 
 # <center>
-# <h1 class='title'> Comprehensive Bifurcation Analysis in a <br>Neuromuscularly-Controlled In Vivo Canine Larynx </h1>
+# <h1 class='title'> Comprehensive Bifurcation Analysis<br>in a Neuromuscularly-Controlled <br>In Vivo Canine Larynx </h1>
 # 
 # <h2 > Juergen Neubauer and Dinesh K. Chhetri </h2>
 # 
@@ -315,6 +316,11 @@ display(F1alt)
 # <markdowncell>
 
 # # Goal: Systematic Catalog of dynamical behaviors as a function of posture and stimulation level
+# 
+# ## Asymmetry
+# ## Agonists-Antagonists actions, groups
+# ## Redundancies in musculo-skeletal framework
+# ## Equivalences in musculo-skeletal framework
 
 # <markdowncell>
 
@@ -453,8 +459,8 @@ display(F1alt)
 # ## Study impact of pulse train parameters: pulse repetition rate, pulse shape
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/EMGtraces_09.png" width=500 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0011.mod.png" width=400 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/EMGtraces_09.mod.png" width=600 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0011.mod.png" width=350 />
 # 
 # <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0014.mod.png" width=450 />

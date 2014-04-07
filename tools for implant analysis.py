@@ -279,6 +279,8 @@ def plotsymmetry(TAasymmetry, symvars = ['phase lead', 'mucosal amp', 'vibratory
     symmetry_cmap.set_under(color = 'k')
     symmetry_cmap.set_over(color = 'gray')
 
+    symmetry_cmap = mpl.colors.ListedColormap(['b', 'g', 'r'])
+    
     plt.close('all')
     
     for casename in TAasymmetry:
@@ -315,7 +317,7 @@ def plotsymmetry(TAasymmetry, symvars = ['phase lead', 'mucosal amp', 'vibratory
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             
-            cb = plt.colorbar(axim, ax = ax, extend = 'both')
+            cb = plt.colorbar(axim, ax = ax) #, extend = 'both')
             cb.solids.set_edgecolor('face')
             cb.set_label(varname)
             
