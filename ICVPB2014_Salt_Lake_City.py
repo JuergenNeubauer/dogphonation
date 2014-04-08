@@ -33,102 +33,102 @@
 from IPython.display import display, HTML, Image
 from wand.image import Image as WImage
 
-# <rawcell>
+# <codecell>
 
-# s = """
-# 
-# <style>
-# 
-# div.cell, div.text_cell_render {
-#         width:100%;
-#         margin-left:1%;
+s = """
+
+<style>
+
+div.cell, div.text_cell_render {
+        width:100%;
+        margin-left:1%;
+        margin-right:auto;
+}
+
+.rendered_html {
+    font-family: "proxima-nova", helvetica;
+    font-size: 150%;
+    line-height: 1.3;
+}
+
+.rendered_html h1 {
+    margin: 0.25em 0em 0.5em;
+    # color: #015C9C;
+    color: #CC3300;
+    text-align: center;
+    line-height: 1.2; 
+    page-break-before: always;
+    font-size: 250%;
+}
+
+.rendered_html h2 {
+    margin: 1.1em 0em 0.5em;
+    color: black;
+    line-height: 1.2;
+}
+
+.rendered_html h3 {
+    margin: 1.1em 0em 0.5em;
+    color: black;
+    line-height: 1.2;
+}
+
+.rendered_html li {
+    font-size: 120%
+    line-height: 1.5;
+}
+
+.prompt {
+    font-size: 120%; 
+}
+
+.CodeMirror-lines {
+    font-size: 120%; 
+}
+
+.output_area {
+    font-size: 120%; 
+}
+
+#notebook {
+#     background-image: url('files/images/witewall_3.png');
+# }
+
+h1.bigtitle {
+    margin: 4cm 1cm 4cm 1cm;
+    font-size: 300%;
+}
+
+h3.point {
+    font-size: 200%;
+    text-align: center;
+    margin: 2em 0em 2em 0em;
+    color: #26465D;
+}
+
+.logo {
+    margin: 20px 0 20px 0;
+}
+
+a.anchor-link {
+    display: none;
+}
+
+h1.title { 
+    font-size: 250%;
+}
+
+# div.cell{
+#         max-width:750px;
+#         margin-left:auto;
 #         margin-right:auto;
 # }
-# 
-# .rendered_html {
-#     font-family: "proxima-nova", helvetica;
-#     font-size: 150%;
-#     line-height: 1.3;
-# }
-# 
-# .rendered_html h1 {
-#     margin: 0.25em 0em 0.5em;
-#     # color: #015C9C;
-#     color: #CC3300;
-#     text-align: center;
-#     line-height: 1.2; 
-#     page-break-before: always;
-#     font-size: 250%;
-# }
-# 
-# .rendered_html h2 {
-#     margin: 1.1em 0em 0.5em;
-#     color: black;
-#     line-height: 1.2;
-# }
-# 
-# .rendered_html h3 {
-#     margin: 1.1em 0em 0.5em;
-#     color: black;
-#     line-height: 1.2;
-# }
-# 
-# .rendered_html li {
-#     font-size: 120%
-#     line-height: 1.5;
-# }
-# 
-# .prompt {
-#     font-size: 120%; 
-# }
-# 
-# .CodeMirror-lines {
-#     font-size: 120%; 
-# }
-# 
-# .output_area {
-#     font-size: 120%; 
-# }
-# 
-# #notebook {
-# #     background-image: url('files/images/witewall_3.png');
-# # }
-# 
-# h1.bigtitle {
-#     margin: 4cm 1cm 4cm 1cm;
-#     font-size: 300%;
-# }
-# 
-# h3.point {
-#     font-size: 200%;
-#     text-align: center;
-#     margin: 2em 0em 2em 0em;
-#     color: #26465D;
-# }
-# 
-# .logo {
-#     margin: 20px 0 20px 0;
-# }
-# 
-# a.anchor-link {
-#     display: none;
-# }
-# 
-# h1.title { 
-#     font-size: 250%;
-# }
-# 
-# # div.cell{
-# #         max-width:750px;
-# #         margin-left:auto;
-# #         margin-right:auto;
-# # }
-# 
-# 
-# </style>
-# """
-# 
-# display(HTML(s))
+
+
+</style>
+"""
+
+display(HTML(s))
 
 # <markdowncell>
 
@@ -179,9 +179,9 @@ from wand.image import Image as WImage
 # <markdowncell>
 
 # # Why
-# ## Reveal basic mechanisms of neuromuscular control of F0, loudness, voice quality, etc.
-# ## Create framework to assess dynamic equivalence of different larynges (human, dog, bats, mammals, birds)
-# ## Use systematic experimental data for validation of models
+# ## Reveal basic mechanisms of neuromuscular control of F0, loudness, voice quality, pathologies
+# ## Framework to assess dynamic equivalence of different larynges (human, dog, bats, birds)
+# ## Systematic experimental data for model validation
 
 # <markdowncell>
 
@@ -318,20 +318,20 @@ from wand.image import Image as WImage
 
 # <markdowncell>
 
-# # Use the bifurcation behavior as a metric to compare different dynamical systems:
+# # Bifurcation behavior: Metric to compare dynamical systems:
 # 
-# ## Different larynges: human, dog, sheep, etc: Are they dynamically equivalent?
-# ## Different intervention procedures for voice pathologies: implants, arytenoid adduction, augmentation, mass injection
-# ## Different grades of paresis/paralysis (muscle weakness)
+# ## Larynges: human, dog, sheep, etc: Are they dynamically equivalent?
+# ## Intervention procedures for voice pathologies: implants, arytenoid adduction, injection
+# ## Grades of paresis/paralysis
 
 # <markdowncell>
 
-# # Goal: Systematic Catalog of dynamical behaviors as a function of posture and stimulation level
+# # Goal: Systematic catalog of dynamical behaviors as a function of posture and stimulation level
 # 
 # ## Asymmetry
-# ## Agonists-Antagonists actions, groups
-# ## Redundancies in musculo-skeletal framework
-# ## Equivalences in musculo-skeletal framework
+# ## Agonist-Antagonist interactions
+# ## Redundancies in laryngeal musculo-skeletal framework
+# ## Equivalences in laryngeal musculo-skeletal framework
 
 # <markdowncell>
 
@@ -339,7 +339,7 @@ from wand.image import Image as WImage
 
 # <markdowncell>
 
-# # The Not-So-Simple Details: Tight Experimental Control! Fast and Automated Experimental Runs!
+# # Not-so-simple details: Tight experimental control. Fast and automated experiments.
 # 
 # <table>
 # <tr>
@@ -384,7 +384,7 @@ from wand.image import Image as WImage
 
 # <markdowncell>
 
-# # Laryngeal Nerve Stimulation
+# # Laryngeal nerve stimulation
 # 
 # ## Tripolar Cuff Electrodes, used in Functional Electrical Stimulation (FES)
 # ## Stimulation Pulse Trains: short, rectangular, biphasic, charge-balanced (30 microseconds per phase)
@@ -420,7 +420,7 @@ from wand.image import Image as WImage
 
 # <markdowncell>
 
-# # Nerve stimulation control (up to 8 nerves)
+# # Nerve stimulation control (8 nerves)
 # 
 # ## Computer-controlled and automated stimulation pulse train sequences
 # 
@@ -436,7 +436,7 @@ from wand.image import Image as WImage
 
 # # Electrode-nerve interface monitoring
 # 
-# ## Detect current shunting and impedance changes by monitoring injected current and voltage
+# ## current shunting, impedance changes, potential drift
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_current_voltage.png" width=1000 />
@@ -444,7 +444,7 @@ from wand.image import Image as WImage
 
 # <markdowncell>
 
-# # Rapid setup of nerve stimulation parameters (up to 8 nerves): 
+# # Rapid setup of nerve stimulation parameters: 
 # 
 # ## Binary search for threshold of nerve excitation (one threshold in 10 seconds)
 # ## Stimulation range finding assisted by visual of posturing and transglottal pressure drop change
@@ -463,10 +463,10 @@ from wand.image import Image as WImage
 
 # <markdowncell>
 
-# # EMG of Laryngeal Muscles
+# # EMG of laryngeal muscles
 # 
 # ## Excitation threshold finding, Stimulation range finding
-# ## Measure relative strength and speed of muscle response (medial, lateral TA, CT, LCA)
+# ## Measure relative strength and speed of muscle response: medial, lateral TA, CT, LCA
 # ## Study impact of pulse train parameters: pulse repetition rate, pulse shape
 # 
 # <center>
@@ -481,7 +481,7 @@ from wand.image import Image as WImage
 
 # <markdowncell>
 
-# # Need for Speed: A recording every 5 seconds
+# # Fast experiments: A recording every 5 seconds
 # 
 # ## High speed motion capture includes prephonatory posturing and vocal fold vibration
 # ## 5 minutes to record a comprehensive, systematic set of 64 stimulation conditions
@@ -515,5 +515,11 @@ from wand.image import Image as WImage
 # 
 # ## Repeat experiments show comparable robust bifurcation scenarios
 # 
-# ## Bifurcations due to: Left-Right Asymmetries; Agonist-Antagonist Muscle Imbalance
+# ## Bifurcations: Left-Right Asymmetries; Agonist-Antagonist Muscle Imbalances; Disturbed Muscle Synergies
+
+# <codecell>
+
+
+
+
 
