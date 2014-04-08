@@ -142,7 +142,7 @@ display(HTML(s))
 # 
 # <h4 > ICVPB Salt Lake City, 2014 </h4>
 # 
-# <h4> Supported by NIH RO1 DC011300</h4>
+# <h4> Supported by NIH RO1 DC011300 </h4>
 # </center>
 
 # <rawcell>
@@ -153,7 +153,7 @@ display(HTML(s))
 
 # # Wanted
 # 
-# ## Complete description of the vocal fold dynamics in an in vivo model
+# ## Complete description of the vocal fold dynamics in an *in vivo* model
 
 # <rawcell>
 
@@ -180,11 +180,11 @@ display(HTML(s))
 
 # # Bifurcation analysis in *in vivo* dog experiment
 # 
-# ## Phonation onset, a Hopf bifurcation during air flow ramp
-# 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/bifurcation.png" width=900 />
 # </center>
+# 
+# ## Phonation onset, a Hopf bifurcation during air flow ramp
 
 # <rawcell>
 
@@ -219,23 +219,21 @@ display(HTML(s))
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/postures.png" width=800 />
 # </center>
+# 
+# ## Computer-controlled, automated pulse train sequences (1500 ms)
+
+# <rawcell>
+
 
 # <markdowncell>
 
 # # Bifurcations induced by air flow ramp
 # 
-# ## Computer-controlled linear flow ramp -- Increasing subglottal pressure
-# 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-16, Dog Experiment CHS/DSC_0039.mod.png" width=800 />
 # </center>
-
-# <rawcell>
-
-# # Neuromuscular stimulation scenarios
 # 
-# ## Left-Right Asymmetric stimulation of muscle groups (e.g. left versus right TA)
-# ## Agonist-Antagonist imbalance -- Left-Right Symmetric stimulation of different muscle groups (e.g. SLN versus TA)
+# ## Computer-controlled linear flow ramp -- Increasing subglottal pressure
 
 # <rawcell>
 
@@ -254,10 +252,10 @@ display(HTML(s))
 # 
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/asymmetricSLN_MidRLN.pout.specgram.600Hz.png" width=1000 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/asymmetricSLN_MidRLN.pout.specgram.600Hz.mod.png" width=1000 />
 # </center>
 # 
-# ## asymmetric SLN for constant mid RLN
+# ## right SLN versus left SLN, constant mid RLN
 
 # <markdowncell>
 
@@ -267,19 +265,21 @@ display(HTML(s))
 # <img src="files/ICVPB2014_Salt_Lake_City.images/trunkRLN_TA_NoSLN Wed Mar 21 2012 17 18 17.psub.specgram.1000Hz.mod.png" width=1000 />
 # </center>
 # 
-# ## trunk RLN versus TA for constant (no) SLN
+# ## TA versus trunk RLN (LCA/IA), constant No SLN
 
 # <markdowncell>
 
-# # Phonation onset: Phonation frequency (F0) -- vocal fold length (strain)
+# # Phonation onset for SLN -- TA -- trunk RLN manipulation
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1.png" width=600 />
 # </center>
+# 
+# ## onset F0 as a function of vocal fold length
 
 # <markdowncell>
 
-# # Tight experimental control. Fast and automated experiments.
+# # Tight experimental control. Fast and automated setup and experiments.
 # 
 # <table>
 # <tr>
@@ -309,9 +309,7 @@ display(HTML(s))
 
 # <markdowncell>
 
-# # Nerve stimulation control (8 nerves)
-# 
-# ## Computer-controlled and automated stimulation pulse train sequences
+# # Computer-controlled and automated nerve stimulation pulse train sequences (8 nerves)
 # 
 # <center>
 # <!--
@@ -323,49 +321,51 @@ display(HTML(s))
 
 # <markdowncell>
 
-# # Fast experiments: A recording every 5 seconds
-# 
-# ## High speed motion capture includes prephonatory posturing and vocal fold vibration
-# ## 5 minutes to record a comprehensive, systematic set of 64 stimulation conditions
-# ## Stimulation range finding and checks also recorded: single nerve stimulation ramps
+# # Fast experiments: New recording every 5 seconds
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 02-22, Dog experiment CHS/DSC_0008.mod.png" width=800 />
+# <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 03-14, Dog Experiment CHS/DSC_0005.mod.png" width=800 />
+# -->
 # </center>
+# 
+# ## High speed video: prephonatory posturing, vocal fold vibration
+# ## 5:20 min for 64 stimulation conditions
+# ## Single nerve stimulation: stimulation range finding
 
 # <markdowncell>
 
-# # Rapid setup of nerve stimulation parameters: 
-# 
-# ## Binary search for threshold of nerve excitation (one threshold in 10 seconds)
-# ## Stimulation range finding assisted by visual of posturing and transglottal pressure drop change
+# # Rapid setup
 # 
 # <center>
 # <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/search_excitation_threshold.png" width=1000 />
 # </center>
+# 
+# ## Binary search for threshold of nerve excitation (one threshold in 10 seconds)
+# ## Stimulation range finding: visual of posturing, real-time transglottal pressure drop change
 
 # <markdowncell>
 
 # # Replication possible!
 # 
-# ## First take --- Second take
+# ## First take ---- Second take
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant Wed Oct 30 2013 14 52 50.pout.specgram.1000Hz.mod.png" width=450 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant repeat Wed Oct 30 2013 16 05 22.pout.specgram.1000Hz.mod.png" width=450 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant Wed Oct 30 2013 14 52 50.pout.specgram.1000Hz.mod.png" width=550 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant repeat Wed Oct 30 2013 16 05 22.pout.specgram.1000Hz.mod.png" width=550 />
 # </center>
 # 
-# ## Left Recurrent Nerve Paralysis: SLN versus right RLN
+# ## Left recurrent nerve paralysis: both SLN versus right RLN
 
 # <markdowncell>
 
 # # Consistent data from in vivo experiment possible!
 # 
-# # Bifurcation behavior: Metric to compare dynamical systems:
+# # Complete bifurcation behavior: Metric to compare dynamical systems
 # 
-# ## Larynges: human, dog, sheep, etc: Are they dynamically equivalent?
+# ## Larynges: human, dog, bats: Are they dynamically equivalent?
 # ## Intervention procedures for voice pathologies: implants, arytenoid adduction, injection
-# ## Grades of paresis/paralysis
+# ## Paresis/paralysis
 
 # <rawcell>
 
