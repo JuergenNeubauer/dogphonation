@@ -431,7 +431,7 @@ display(HTML(s))
 
 # As a result, we are now able to replicate bifurcation behaviors when we repeat experiments in the same dog.
 # 
-# What I show here is a repeat experiment of a paralysis condition in the same dog. You can see that the spectral bifurcatoin diagrams are similar for the first and the second take of this repeat experiment.
+# What I show here is a repeat experiment of a paralysis condition in the same dog. You can see that the arrays of spectral bifurcation diagrams are similar for the first and the second take of this repeat experiment.
 # 
 # So now we are able to use this bifurcation behavior, symbolized by the spectral bifurcation diagrams, to compare and quantify the overall dynamic behavior, either in the same dog, or between dogs, or across species, and so on.
 
