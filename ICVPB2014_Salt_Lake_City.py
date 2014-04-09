@@ -147,7 +147,7 @@ display(HTML(s))
 
 # <rawcell>
 
-# Over the last couple of years we developed an experimental setup to catalog the complete vocal fold dynamics in our in vivo dog model.
+# Over the last couple of years we have been developing an experimental setup to catalog the complete vocal fold dynamics in our in vivo dog model.
 
 # <markdowncell>
 
@@ -168,13 +168,19 @@ display(HTML(s))
 
 # <rawcell>
 
-# How are we doing this? We do this with a comprehensive and systematic experimental bifurcation analysis. 
+# How are we doing this? 
 # 
-# For example, I'm showing the most interesting bifurcation, the phonation onset, which is a Hopf bifurcation. 
+# We do this with a comprehensive and systematic experimental bifurcation analysis. 
 # 
-# In this spectrogram of the subglottal acoustic signal, there is a transition from aphonia to vocal fold vibration as demonstrated by the appearing stack of harmonics. 
+# For example, I'm showing the most interesting and important bifurcations, the phonation onset, which is a Hopf bifurcation. 
+# 
+# In this spectrogram of the subglottal acoustic signal, there is a transition from aphonia to vocal fold vibration as demonstrated by the appearance of stack of harmonics on the right side of the spectrogram. 
 # 
 # This happens due to an increase in subglottal pressure.
+# 
+# I will call this kind of spectrogram 'spectral bifurcation diagram' and I will show many more of them in a second. 
+# 
+# These spectral bifurcation diagrams are the basic building block to characterize the overall vocal fold dynamics.
 
 # <markdowncell>
 
@@ -206,9 +212,17 @@ display(HTML(s))
 
 # <rawcell>
 
-# When do we get these bifurcations? Different bifurcations appear for different kinds of manipulations of the laryngeal muscles. Muscles are like actuators, they deform the larynx, and so they set the vocal fold posture and the internal stiffnesses. When we blow air through such a deformed larynx, these bifurcations appear.
+# When do we get these bifurcations? 
 # 
-# In our experiments we control the muscles by stimulating the nerves. These are the SLN, RLN, and branches of the RLN.
+# Different bifurcations appear for different kinds of manipulations of the laryngeal muscles. 
+# 
+# Muscles are like actuators, they deform the larynx, and so they set the vocal fold posture and the internal stiffnesses. 
+# 
+# When we blow air through such a deformed larynx, all kinds of bifurcations can appear.
+# 
+# In our experiments we control the muscles by stimulating the nerves. 
+# 
+# These are the SLN, RLN, and branches of the RLN.
 # 
 # This example shows all locations of landmark points on the vocal folds for different muscle activations.
 
@@ -224,6 +238,13 @@ display(HTML(s))
 
 # <rawcell>
 
+# Different bifurcations also occur when we apply an air flow ramp to each of the muscle manipulations. 
+# 
+# Due to some glottal flow resistance, this causes the subglottal pressure to increase. 
+# 
+# Then, usually, phonation onset occurs, or, for even high pressures, all other kinds of bifurcations can occur.
+# 
+# To give you an idea of how low of a subglottal pressure we can find at phonation onset in our in vivo experiments, it is about 2 cm of water, so similar to the lowest onset pressure known in human phonation.
 
 # <markdowncell>
 
@@ -237,13 +258,21 @@ display(HTML(s))
 
 # <rawcell>
 
-# There are a couple of particularly interesting manipulations of the larynx. First I'll show an example of a left-right asymmetric stimulation experiment. 
+# There are a couple of particularly interesting manipulations of the larynx. 
 # 
-# Such a manipulation simulates a unilateral paresis and paralysis pathology.
+# First I'll show an example of a left-right asymmetric stimulation experiment. 
 # 
-# The spectral bifurcation diagrams look similar on both sides of the diagonal. 
+# Such a manipulation simulates a unilateral paresis or a unilateral vocal fold paralysis.
 # 
-# For low levels of SLN stimulation, we can see more regular phonation. For medium levels, broadband and chaotic oscillations appear with transitions to regular phonation. For the highest levels, again more regular phonation, now with higher fundamental frequency appear.
+# Along each row, the left SLN level increases in 7 steps. Along each column, the right SLN level increases also in 7 steps.
+# 
+# The overall array of spectral bifurcation diagrams looks symmetric with respect to the diagonal line. The diagonal would correspond to a nominal left-right symmetric stimulation. 
+# 
+# For low levels of SLN stimulation, we can see more regular phonation with a low fundamental frequency. 
+# 
+# For medium levels, broadband and chaotic oscillations appear with transitions to regular phonation. 
+# 
+# At the highest levels, again more regular phonation, now with higher fundamental frequency appear.
 
 # <markdowncell>
 
@@ -257,6 +286,18 @@ display(HTML(s))
 # 
 # ## right SLN versus left SLN, constant mid RLN
 
+# <rawcell>
+
+# The second example is a agonist-antagonist imbalance scenario. Here the larynx was stimulated symmetrically on the left and the right side.
+# 
+# In this case I show levels of TA stimulation increasing along the columns and trunk RLN levels increasing along the rows.
+# 
+# Such a manipulation is of fundamental importance to study the influence of vocal fold posture on phonation. We are interested in how muscle synergies create elemental postures and how elemental postures cause different kinds of bifurcation behavior.
+# 
+# That means for example, we could ask whether different muscle interactions produce the same bifurcation behavior. We could then rank such task-level muscle redundancies in terms of how difficult they are for the larynx to produce.  
+# 
+# In the shown array of spectral bifurcation diagrams I want to point out two features. One is the appearance of broadband chaotic vibration for high TA and high trunk RLN levels, shown in the upper right corner. The other is the fact that TA activation decreases the fundamental frequency at onset. Onset is at the left edge of the stack of harmonics.
+
 # <markdowncell>
 
 # # Agonist-antagonist imbalance
@@ -267,15 +308,30 @@ display(HTML(s))
 # 
 # ## TA versus trunk RLN (LCA/IA), constant No SLN
 
+# <rawcell>
+
+# We have been focusing on analyzing the most important bifurcation, the Hopf bifurcation at phonation onset.
+# 
+# At phonation onset, we measure the onset frequency, subglottal pressure and flow, and we measure vocal fold strain and adduction from the high speed videos of the larynx.
+# 
+# Here, I show the very surprising finding that onset frequencies cluster in two branches as a function of vocal fold strain. It's surprising because it's reminiscent of chest and falsetto registers at phonation onset.
+# 
+# The influence of muscle redundancies can be seen in the graph on the right, showing the same data as on the left. Different TA activations can lead to the same onset frequency. This happens when the other two muscles involved, the SLN and the trunk RLN, are changed.
+
 # <markdowncell>
 
 # # Phonation onset for SLN -- TA -- trunk RLN manipulation
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1.png" width=600 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1.png" width=450 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1_alt.png" width=450 />
 # </center>
 # 
-# ## onset F0 as a function of vocal fold length
+# ## chest and falsetto-like clusters at phonation onset
+
+# <rawcell>
+
+# We have spent a lot of effort building an in vivo experiment with tight controls, that we can execute quickly and automatically.
 
 # <markdowncell>
 
@@ -307,6 +363,10 @@ display(HTML(s))
 # </tr>
 # </table>
 
+# <rawcell>
+
+# In our in vivo experiments the stimulation pulse train delivery is fully computer controlled and automated.
+
 # <markdowncell>
 
 # # Computer-controlled and automated nerve stimulation pulse train sequences (8 nerves)
@@ -318,6 +378,27 @@ display(HTML(s))
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Lab UCLA 2012 11-14 Dog Experiment CHS/DSC_0009.mod.png" width=700 />
 # <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/dog_experiment_nerve_settings.png" width=700 />
 # </center>
+
+# <rawcell>
+
+# We can find nerve stimulation thresholds and nerve stimulation range very quickly, e.g., using a binary search procedure.
+
+# <markdowncell>
+
+# # Rapid setup
+# 
+# <center>
+# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/search_excitation_threshold.png" width=1000 />
+# </center>
+# 
+# ## Binary search for threshold of nerve excitation (one threshold in 10 seconds)
+# ## Stimulation range finding: visual of posturing, real-time transglottal pressure drop change
+
+# <rawcell>
+
+# And we measure the relevant variables every five seconds, that is subglottal pressure and flow rate, subglottal acoustics, outside acoustics, EMG from laryngeal muscles, the electrode-nerve impedances, and, last but not least,  high speed video data of the prephonatory posturing behavior and vocal fold vibration.
+# 
+# So for example within 5 minutes and 20 seconds we can have a complete set of 8 times 8 , so 64, different stimulation conditions.
 
 # <markdowncell>
 
@@ -332,18 +413,14 @@ display(HTML(s))
 # 
 # ## High speed video: prephonatory posturing, vocal fold vibration
 # ## 5:20 min for 64 stimulation conditions
-# ## Single nerve stimulation: stimulation range finding
 
-# <markdowncell>
+# <rawcell>
 
-# # Rapid setup
+# Due to all this effort, we are now able to replicate bifurcation behaviors when we repeat experiments in the same dog.
 # 
-# <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/2013-10-29 LabView control setup for dog phonation experiments/search_excitation_threshold.png" width=1000 />
-# </center>
+# As shown here, the array of spectral bifurcation diagrams is similar for the first and the second take of this repeat experiment. This repeat experiment was done on the same dog.
 # 
-# ## Binary search for threshold of nerve excitation (one threshold in 10 seconds)
-# ## Stimulation range finding: visual of posturing, real-time transglottal pressure drop change
+# So now we are able to use the bifurcation behavior, symbolized by the spectral bifurcation diagrams, to compare and quantify the overall dynamic behavior, either in the same dog, or between dogs, or across species, and so on.
 
 # <markdowncell>
 
@@ -357,22 +434,20 @@ display(HTML(s))
 # 
 # ## Left recurrent nerve paralysis: both SLN versus right RLN
 
-# <markdowncell>
-
-# # Consistent data from in vivo experiment possible!
-# 
-# # Complete bifurcation behavior: Metric to compare dynamical systems
-# 
-# ## Larynges: human, dog, bats: Are they dynamically equivalent?
-# ## Intervention procedures for voice pathologies: implants, arytenoid adduction, injection
-# ## Paresis/paralysis
-
 # <rawcell>
 
-# # Goal: Systematic catalog of dynamical behaviors as a function of posture and stimulation level
+# What this means is that we can now collect consistent dynamic data from our in vivo dog experiment with high confidence and at high speed. That allows us to systematically catalog the complete bifurcation behavior.
 # 
-# ## Asymmetry
-# ## Agonist-Antagonist interactions
-# ## Redundancies in laryngeal musculo-skeletal framework
-# ## Equivalences in laryngeal musculo-skeletal framework
+# So now it makes sense to use these sets of bifurcation behaviors as a metric to compare different dynamical systems.
+# 
+# Different dynamical systems could be different dogs, or different species (either human or dog or bats). So we can now quantitatively answer the question how dynamically equivalent the vocal folds of these different species really are.
+# 
+# And last, we can use this bifurcation metric also to decide how effective different intervention procedures are to correct voice pathologies by using vocal fold implants or arytenoid adduction or mass injection.
+
+# <markdowncell>
+
+# # Complete bifurcation behavior provides a metric to compare dynamical systems
+# 
+# ## Metric to measure dynamical equivalence of different larynes: human, dog, bats, etc
+# ## Metric to evaluate intervention procedures for voice pathologies: implants, arytenoid adduction, injection
 
