@@ -419,8 +419,10 @@ display(HTML(s))
 # 
 # ## First take ---- Second take
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant Wed Oct 30 2013 14 52 50.pout.specgram.1000Hz.mod.png" width=400 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant repeat Wed Oct 30 2013 16 05 22.pout.specgram.1000Hz.mod.png" width=400 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant Repeats.png" width=1000 />
+# <!--
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant repeat Wed Oct 30 2013 16 05 22.pout.specgram.1000Hz.mod.png" width=350 />
+# -->
 # </center>
 # 
 # ## Left recurrent nerve paralysis: both SLN versus right RLN
@@ -448,5 +450,5 @@ display(HTML(s))
 # 
 # Different dynamical systems could be different dogs, or different species (either human or dog or bats). So we can now quantitatively answer the question how dynamically equivalent the vocal folds of these different species really are.
 # 
-# And last, we can use this bifurcation metric also to decide how effective different intervention procedures are to correct voice pathologies by using vocal fold implants or arytenoid adduction or mass injection.
+# And finally, we can use this bifurcation metric also to decide how effective different intervention procedures are to correct voice pathologies by using vocal fold implants or arytenoid adduction or mass injection.
 
