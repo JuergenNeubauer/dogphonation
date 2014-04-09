@@ -194,7 +194,7 @@ display(HTML(s))
 # 
 # Here, I used an increasing subglottal pressure as the bifurcation parameter. So phonation onset happened when the subglottal pressure was sufficiently high.
 # 
-# I will call this kind of spectrogram 'spectral bifurcation diagram'. 
+# I will call this kind of spectrogram a 'spectral bifurcation diagram'. 
 # 
 # I will use these spectral bifurcation diagrams as the basic building blocks to characterize the vocal fold dynamics of all kinds of laryngeal conditions.
 
@@ -235,8 +235,6 @@ display(HTML(s))
 # In our experiments we control the muscles by stimulating their nerves. 
 # 
 # These are the SLN, RLN, and branches of the RLN.
-# 
-# This example shows all locations of landmark points on the vocal folds for different muscle activations.
 
 # <markdowncell>
 
@@ -280,7 +278,7 @@ display(HTML(s))
 # Along each row, the left SLN level increases in 7 steps. 
 # Along each column, the right SLN level increases also in 7 steps.
 # 
-# The overall array of spectral bifurcation diagrams looks pretty symmetric with respect to the diagonal line. That what we would expect if the true activation of the muscles was symmetric and the larynx did not have any intrinsic tissue asymmetries.
+# The overall array of spectral bifurcation diagrams looks pretty symmetric with respect to the diagonal. That's what we would expect if the true activation of the muscles was symmetric and the larynx did not have any intrinsic tissue asymmetries.
 
 # <markdowncell>
 
