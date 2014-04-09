@@ -153,6 +153,8 @@ display(HTML(s))
 
 # <rawcell>
 
+# I'm going to talk about our in vivo dog experiments and how we use bifurcation analysis
+# 
 # We have been working on a method in the last couple of years to measure, record, and catalog the complete vocal fold dynamics in an in vivo dog experiment.
 
 # <markdowncell>
@@ -192,11 +194,11 @@ display(HTML(s))
 # 
 # In this spectrogram of the subglottal acoustic signal, a transition occurs from aphonia to vocal fold vibration. This transition happens where the stack of harmonics appear on the right side of the spectrogram. 
 # 
-# Here, I used an increasing subglottal pressure as the bifurcation parameter. So phonation onset happens when the subglottal pressure is increased high enough.
+# Here, I used an increasing subglottal pressure as the bifurcation parameter. So phonation onset happened when the subglottal pressure was sufficiently high.
 # 
 # I will call this kind of spectrogram 'spectral bifurcation diagram'. 
 # 
-# I will show that such spectral bifurcation diagrams are the basic building blocks to characterize the overall vocal fold dynamics.
+# I will use these spectral bifurcation diagrams as the basic building blocks to characterize the vocal fold dynamics of all kinds of laryngeal conditions.
 
 # <markdowncell>
 
