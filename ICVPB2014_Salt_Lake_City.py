@@ -302,10 +302,10 @@ display(HTML(s))
 
 # <markdowncell>
 
-# # Phonation onset for SLN -- TA -- trunk RLN manipulation
+# # F0 for SLN-TA-trunk RLN manipulation
 # 
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1.png" width=450 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1.png" width=600 />
 # <!--
 # <img src="files/ICVPB2014_Salt_Lake_City.images/Figure1_alt.png" width=450 />
 # -->
@@ -359,7 +359,7 @@ display(HTML(s))
 
 # <markdowncell>
 
-# # Computer-controlled and automated nerve stimulation pulse train sequences (8 nerves)
+# # Computer-controlled, automated sequences of nerve stimulation pulse trains (8 nerves)
 # 
 # <center>
 # <!--
