@@ -419,8 +419,8 @@ display(HTML(s))
 # 
 # ## First take ---- Second take
 # <center>
-# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant Wed Oct 30 2013 14 52 50.pout.specgram.1000Hz.mod.png" width=550 />
-# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant repeat Wed Oct 30 2013 16 05 22.pout.specgram.1000Hz.mod.png" width=550 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant Wed Oct 30 2013 14 52 50.pout.specgram.1000Hz.mod.png" width=400 />
+# <img src="files/ICVPB2014_Salt_Lake_City.images/SLN versus right RLN No implant repeat Wed Oct 30 2013 16 05 22.pout.specgram.1000Hz.mod.png" width=400 />
 # </center>
 # 
 # ## Left recurrent nerve paralysis: both SLN versus right RLN

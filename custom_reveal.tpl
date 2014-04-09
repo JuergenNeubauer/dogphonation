@@ -68,7 +68,7 @@ theme: Reveal.getQueryHash().theme || 'serif', // available themes are in /css/t
 transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/none
 
 width: Reveal.getQueryHash().width || 1500, // default: 960
-height: Reveal.getQueryHash().height || 700, // 1200, // default: 700
+height: Reveal.getQueryHash().height || 1000, // 1200, // default: 700
 
 // factor of display size that should remain empty
 margin: Reveal.getQueryHash().margin || 0.0, // default: 0.1
