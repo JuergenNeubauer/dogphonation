@@ -12,6 +12,13 @@ import numpy as np
 
 # <codecell>
 
+
+# <codecell>
+
+%matplotlib inline
+
+# <codecell>
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -32,7 +39,27 @@ fullfilename = os.path.join(dirname, filename)
 
 # <codecell>
 
+win_s = 1024
+hop_s = win_s / 4
+
+samplerate = 0
+
+s = aubio.source(fullfilename, samplerate, hop_s)
+
+# <codecell>
+
+print s.samplerate
+print s.hop_size
+
+# <codecell>
+
+
+# <codecell>
+
 !play "$fullfilename"
+
+# <codecell>
+
 
 # <codecell>
 

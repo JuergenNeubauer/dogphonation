@@ -11,6 +11,7 @@
 
 from IPython.html import widgets # Widget definitions
 from IPython.display import display # Used to display widgets in the notebook
+from IPython.display import Audio
 
 # <headingcell level=1>
 
@@ -120,4 +121,11 @@ mysecondwidget.value
 # <markdowncell>
 
 # In [Part 2](Part 2 - Events.ipynb) of this [series](index.ipynb), you will learn about widget events.
+
+# <codecell>
+
+widgets.RadioButtonsWidget()
+
+# <codecell>
+
 

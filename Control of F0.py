@@ -420,7 +420,7 @@ webframe("http://jneubaue.bol.ucla.edu/publications/JAS01401.pdf#page=4", width 
 
 from sklearn.cluster import DBSCAN
 from sklearn import metrics
-from sklearn.preprocessing im(port StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 # <codecell>
 
@@ -725,7 +725,7 @@ plt.show()
 # <codecell>
 
 from IPython.display import display, Math, Latex
-display(Math(r'F(k) = \int_{-\infty}^{\infty} f(x) e^{2\pi i k} dx'))
+display(Math(r'F(k) = \int_{-\infty}^{\infty} f(x) e^{2\pi i k x} dx'))
 
 # <codecell>
 
