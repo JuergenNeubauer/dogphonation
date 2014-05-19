@@ -233,7 +233,7 @@ y0 = [r0, phi0, ps0]
 
 # <codecell>
 
-time, r, phi, ps = run_iteration(supercritical, supercritical_jac, [r0 * 100.0, phi0, ps0], t0, omega, b, slope_ps = 50)
+time, r, phi, ps = run_iteration(supercritical, supercritical_jac, [r0 * 1.0, phi0, ps0], t0, omega, b, slope_ps = 50)
 
 psub = r * np.sin(phi)
 
@@ -313,6 +313,137 @@ ax1.set_ylabel('amplitude of vibration')
 ax1.legend(loc = 'upper left')
 
 ax1.set_ylim(ymin = 0.005, ymax = 10)
+
+# <codecell>
+
+# plt.clf()
+
+plt.plot(ps, F, '-', label = 'r0 = %.2f' % r[0])
+
+plt.xlim(xmin = min(ps), xmax = max(ps))
+
+plt.xlabel('ps')
+plt.ylabel('frequency [Hz]')
+
+plt.ylim(ymin = F0 - 1)
+
+plt.title('Instantaneous frequency')
+
+plt.legend(loc = 'upper left')
+
+# <codecell>
+
+# plt.clf()
+# fig, ax1 = plt.subplots()
+
+ax1.plot(time, psub, '-', label = 'r0 = %.2f' % r[0])
+ax1.set_yscale('linear')
+
+ax2 = plt.twinx(ax1)
+
+ax2.plot(time, ps, 'r-', zorder = 1000)
+ax2.set_ylabel('ps', color = 'red')
+
+ax1.set_xlabel('time')
+
+ax1.set_ylabel('psub')
+
+ax1.set_xlim(xmax = 1)
+ax1.grid(False, axis = 'y')
+
+ax2.set_ylim(ymin = min(ps), ymax = max(ps))
+
+ax1.legend(loc = 'upper left')
+
+# <codecell>
+
+# plt.clf()
+# fig, ax1 = plt.subplots()
+
+ax1.plot(time, r, '-', label = 'r0 = %.2f' % r[0])
+ax1.set_yscale('log')
+# ax1.set_xscale('log')
+
+ax2 = plt.twiny(ax1)
+
+ax1.set_xlim(xmax = 1)
+ax1.grid(False, axis = 'both')
+
+ax2.set_xlim(xmin = min(ps), xmax = max(ps))
+ax2.grid(False, axis = 'y')
+
+ax1.set_xlabel('time')
+ax2.set_xlabel('ps')
+
+ax1.set_ylabel('amplitude of vibration')
+
+ax1.legend(loc = 'upper left')
+
+ax1.set_ylim(ymin = 0.005, ymax = 10)
+
+# <codecell>
+
+if 0:
+    plt.close('all')
+    plt.clf()
+    fig, ax1 = plt.subplots()
+
+ax1.plot(time, psub, '-', label = 'slope_ps = %.0f' % slope_ps)
+ax1.set_yscale('linear')
+
+ax2 = plt.twinx(ax1)
+
+ax2.plot(time, ps, 'r-', zorder = 1000)
+ax2.set_ylabel('ps', color = 'red')
+
+ax1.set_xlabel('time')
+
+ax1.set_ylabel('psub')
+
+ax1.set_xlim(xmax = 1)
+ax1.grid(False, axis = 'y')
+
+ax2.set_ylim(ymin = min(ps), ymax = max(ps))
+
+ax1.legend(loc = 'upper left')
+
+# <codecell>
+
+time, r, phi, ps = run_iteration(supercritical, supercritical_jac, [r0 * 1.0, phi0, ps0], t0, omega, b, slope_ps = 50 * 0.5)
+
+psub = r * np.sin(phi)
+
+omega, b, slope_ps = Hopf.f_params
+
+# instantaneous frequency
+
+F = (omega + b * r**3) / (2.0 * np.pi)
+
+# <codecell>
+
+if 0:
+    plt.close('all')
+    plt.clf()
+    fig, ax1 = plt.subplots()
+
+ax1.plot(time, psub, '-', label = 'slope_ps = %.0f' % slope_ps)
+ax1.set_yscale('linear')
+
+ax2 = plt.twinx(ax1)
+
+ax2.plot(time, ps, 'r-', zorder = 1000)
+ax2.set_ylabel('ps', color = 'red')
+
+ax1.set_xlabel('time')
+
+ax1.set_ylabel('psub')
+
+ax1.set_xlim(xmax = 1)
+ax1.grid(False, axis = 'y')
+
+ax2.set_ylim(ymin = min(ps), ymax = max(ps))
+
+ax1.legend(loc = 'upper left')
 
 # <codecell>
 
