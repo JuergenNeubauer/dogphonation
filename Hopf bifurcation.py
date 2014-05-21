@@ -95,31 +95,32 @@ slope_ps = (ps1 - ps0) / np.float(t1 - t0)
 # offset
 b_ps = ps0
 
-print "slope of subglottal pressure rise: {} Pa / sec".format(a_ps)
+print "slope of subglottal pressure rise: {} Pa / sec".format(slope_ps)
 
 # <codecell>
 
 # supercritical Hopf bifurcation, right-hand side
 
-def supercritical(t, y, omega, b, slope_ps):
+def supercritical(t, y, omega, b, g, slope_ps):
     r, phi, ps = y
     
     drdt = ps * r - r**3
 
-    dphidt = omega + b * r**3
+    dphidt = omega + b * r**2
 
     dpsdt = slope_ps
 
     return [drdt, dphidt, dpsdt]
 
-def supercritical_jac(t, y, omega, b, slope_ps):
+# Jacobian of right-hand side
+def supercritical_jac(t, y, omega, b, g, slope_ps):
     r, phi, ps = y
     
     drdr = ps - 3.0 * r**2
     drdphi = 0
     drdps = r
     
-    dphidr = b * 3.0 * r**2
+    dphidr = b * 2.0 * r
     dphidphi = 0
     dphidps = 0
     
@@ -135,25 +136,62 @@ def supercritical_jac(t, y, omega, b, slope_ps):
 
 # subcritical Hopf bifurcation
 
-def subcritical(t, y, omega, b, slope_ps):
+def subcritical(t, y, omega, b, g, slope_ps):
     r, phi, ps = y
 
     drdt = ps * r + r**3 - r**5
 
-    dphidt = omega + b * r**3
+    dphidt = omega + b * r**2
 
     dpsdt = slope_ps
 
     return [drdt, dphidt, dpsdt]
 
-def subcritical_jac(t, y, omega, b, slope_ps):
+def subcritical_jac(t, y, omega, b, g, slope_ps):
     r, phi, ps = y
     
     drdr = ps + 3.0 * r**2 - 5.0 * r**4
     drdphi = 0
     drdps = r
     
-    dphidr = b * 3.0 * r**2
+    dphidr = b * 2.0 * r
+    dphidphi = 0
+    dphidps = 0
+
+    dpsdr = 0
+    dpsdphi = 0
+    dpsdps = 0
+    
+    return [[drdr, drdphi, drdps],
+            [dphidr, dphidphi, dphidps],
+            [dpsdr, dpsdphi, dpsdps]]
+
+# <codecell>
+
+# sub- and supercritical Hopf bifurcation
+
+# supercritical: g < 0
+# subcritical: g > 0
+
+def subsupercritical(t, y, omega, b, g, slope_ps):
+    r, phi, ps = y
+
+    drdt = ps * r + g * r**3 - r**5
+
+    dphidt = omega + b * r**2
+
+    dpsdt = slope_ps
+
+    return [drdt, dphidt, dpsdt]
+
+def subsupercritical_jac(t, y, omega, b, g, slope_ps):
+    r, phi, ps = y
+    
+    drdr = ps + 3.0 * g * r**2 - 5.0 * r**4
+    drdphi = 0
+    drdps = r
+    
+    dphidr = b * 2.0 * r
     dphidphi = 0
     dphidps = 0
 
@@ -197,7 +235,7 @@ help Hopf.jac
 
 # <codecell>
 
-def run_iteration(rhs, jac, y0, t0, omega, b, slope_ps):
+def run_iteration(rhs, jac, y0, t0, omega, b, g, slope_ps):
     """
     rhs: function handle for right hand side, e.g. subcritical or supercritical
     jac: Jacobian
@@ -205,9 +243,9 @@ def run_iteration(rhs, jac, y0, t0, omega, b, slope_ps):
     Hopf.f = rhs
     Hopf.jac = jac
     
-    Hopf.set_f_params(omega, b, slope_ps)
+    Hopf.set_f_params(omega, b, g, slope_ps)
     
-    Hopf.set_jac_params(omega, b, slope_ps)
+    Hopf.set_jac_params(omega, b, g, slope_ps)
     
     Hopf.set_initial_value(y0, t0)
     
@@ -233,25 +271,44 @@ y0 = [r0, phi0, ps0]
 
 # <codecell>
 
-time, r, phi, ps = run_iteration(supercritical, supercritical_jac, [r0 * 1.0, phi0, ps0], t0, omega, b, slope_ps = 50)
+superH = {}
 
-psub = r * np.sin(phi)
+initial_r0 = [0.01, 0.1, 1.0]
 
-omega, b, slope_ps = Hopf.f_params
+for r0 in initial_r0:
 
-# instantaneous frequency
+    time, r, phi, ps = run_iteration(supercritical, supercritical_jac, [r0, phi0, ps0], t0, omega, b, g = None, slope_ps = 50)
 
-F = (omega + b * r**3) / (2.0 * np.pi)
+    psub = r * np.sin(phi)
+
+    omega, b, g, slope_ps = Hopf.f_params
+
+    # instantaneous frequency
+
+    F = (omega + b * r**2) / (2.0 * np.pi)
+    
+    superH[r0] = {}
+    superH[r0]['params'] = dict(omega = omega, b = b, g = g, slope_ps = slope_ps)
+    superH[r0].update(time = time, r = r, phi = phi, ps = ps, psub = psub, F = F)
 
 # <codecell>
 
-%config InlineBackend.close_figures = False
+print superH.keys()
+print superH[0.01].keys()
+print superH[0.01]['params']
 
 # <codecell>
 
-# plt.clf()
+%config InlineBackend.close_figures = True
 
-plt.plot(ps, F, '-', label = 'r0 = %.2f' % r[0])
+# <codecell>
+
+plt.close('all')
+
+for r0 in initial_r0:
+    ps  = superH[r0]['ps']
+    
+    plt.plot(ps, superH[r0]['F'], '-', label = 'r0 = %.2f' % r0)
 
 plt.xlim(xmin = min(ps), xmax = max(ps))
 
@@ -260,17 +317,21 @@ plt.ylabel('frequency [Hz]')
 
 plt.ylim(ymin = F0 - 1)
 
-plt.title('Instantaneous frequency')
+plt.title('supercritical Hopf: instantaneous frequency')
 
 plt.legend(loc = 'upper left')
 
 # <codecell>
 
-# plt.clf()
-# fig, ax1 = plt.subplots()
+plt.close('all')
 
-ax1.plot(time, psub, '-', label = 'r0 = %.2f' % r[0])
-ax1.set_yscale('linear')
+fig, ax1 = plt.subplots()
+
+for r0 in initial_r0:
+    time = superH[r0]['time']
+    
+    ax1.plot(time, superH[r0]['psub'], '-', label = 'r0 = %.2f' % r0, zorder = 1/r0)
+    ax1.set_yscale('linear')
 
 ax2 = plt.twinx(ax1)
 
@@ -290,12 +351,14 @@ ax1.legend(loc = 'upper left')
 
 # <codecell>
 
-# plt.clf()
-# fig, ax1 = plt.subplots()
+plt.close('all')
 
-ax1.plot(time, r, '-', label = 'r0 = %.2f' % r[0])
-ax1.set_yscale('log')
-# ax1.set_xscale('log')
+fig, ax1 = plt.subplots()
+
+for r0 in initial_r0:
+    ax1.plot(time, superH[r0]['r'], '-', label = 'r0 = %.2f' % r0)
+    ax1.set_yscale('log')
+    # ax1.set_xscale('log')
 
 ax2 = plt.twiny(ax1)
 
@@ -316,9 +379,31 @@ ax1.set_ylim(ymin = 0.005, ymax = 10)
 
 # <codecell>
 
-# plt.clf()
+subH = {}
 
-plt.plot(ps, F, '-', label = 'r0 = %.2f' % r[0])
+for r0 in initial_r0:
+    time, r, phi, ps = run_iteration(subcritical, subcritical_jac, [r0, phi0, ps0], t0, omega, b, g = None, slope_ps = 50)
+
+    psub = r * np.sin(phi)
+
+    omega, b, g, slope_ps = Hopf.f_params
+
+    # instantaneous frequency
+
+    F = (omega + b * r**2) / (2.0 * np.pi)
+    
+    subH[r0] = {}
+    subH[r0]['params'] = dict(omega = omega, b = b, g = g, slope_ps = slope_ps)
+    subH[r0].update(time = time, r = r, phi = phi, ps = ps, psub = psub, F = F)    
+
+# <codecell>
+
+plt.close('all')
+
+for r0 in initial_r0:
+    ps = subH[r0]['ps']
+    
+    plt.plot(ps, subH[r0]['F'], '-', label = 'r0 = %.2f' % r0)
 
 plt.xlim(xmin = min(ps), xmax = max(ps))
 
@@ -327,17 +412,21 @@ plt.ylabel('frequency [Hz]')
 
 plt.ylim(ymin = F0 - 1)
 
-plt.title('Instantaneous frequency')
+plt.title('subcritical Hopf: instantaneous frequency')
 
 plt.legend(loc = 'upper left')
 
 # <codecell>
 
-# plt.clf()
-# fig, ax1 = plt.subplots()
+plt.close('all')
 
-ax1.plot(time, psub, '-', label = 'r0 = %.2f' % r[0])
-ax1.set_yscale('linear')
+fig, ax1 = plt.subplots()
+
+for r0 in initial_r0:
+    time = subH[r0]['time']
+    
+    ax1.plot(time, subH[r0]['psub'], '-', label = 'r0 = %.2f' % r0, zorder = 1/r0)
+    ax1.set_yscale('linear')
 
 ax2 = plt.twinx(ax1)
 
@@ -355,14 +444,20 @@ ax2.set_ylim(ymin = min(ps), ymax = max(ps))
 
 ax1.legend(loc = 'upper left')
 
+ax1.set_title('subcritical Hopf')
+
 # <codecell>
 
-# plt.clf()
-# fig, ax1 = plt.subplots()
+plt.close('all')
 
-ax1.plot(time, r, '-', label = 'r0 = %.2f' % r[0])
-ax1.set_yscale('log')
-# ax1.set_xscale('log')
+fig, ax1 = plt.subplots()
+
+for r0 in initial_r0:
+    time = subH[r0]['time']
+    
+    ax1.plot(time, subH[r0]['r'], '-', label = 'r0 = %.2f' % r0)
+    ax1.set_yscale('log')
+    # ax1.set_xscale('log')
 
 ax2 = plt.twiny(ax1)
 
@@ -383,18 +478,58 @@ ax1.set_ylim(ymin = 0.005, ymax = 10)
 
 # <codecell>
 
-if 0:
-    plt.close('all')
-    plt.clf()
-    fig, ax1 = plt.subplots()
+slopes = [25, 50, 100]
 
-ax1.plot(time, psub, '-', label = 'slope_ps = %.0f' % slope_ps)
-ax1.set_yscale('linear')
+r0 = 0.01
 
+for slope in slopes:
+    time, r, phi, ps = run_iteration(supercritical, supercritical_jac, [r0, phi0, ps0], t0, omega, b, g = None, slope_ps = slope)
+
+    psub = r * np.sin(phi)
+
+    omega, b, g, slope_ps = Hopf.f_params
+
+    # instantaneous frequency
+
+    F = (omega + b * r**2) / (2.0 * np.pi)
+    
+    superH[slope] = {}
+    superH[slope]['params'] = dict(omega = omega, b = b, g = g, slope_ps = slope_ps)
+    superH[slope].update(time = time, r = r, phi = phi, ps = ps, psub = psub, F = F)    
+
+# <codecell>
+
+for slope in slopes:
+    time, r, phi, ps = run_iteration(subcritical, subcritical_jac, [r0, phi0, ps0], t0, omega, b, g = None, slope_ps = slope)
+
+    psub = r * np.sin(phi)
+
+    omega, b, g, slope_ps = Hopf.f_params
+
+    # instantaneous frequency
+
+    F = (omega + b * r**2) / (2.0 * np.pi)
+    
+    subH[slope] = {}
+    subH[slope]['params'] = dict(omega = omega, b = b, g = g, slope_ps = slope_ps)
+    subH[slope].update(time = time, r = r, phi = phi, ps = ps, psub = psub, F = F)    
+
+# <codecell>
+
+plt.close('all')
+
+fig1, ax1 = plt.subplots()
 ax2 = plt.twinx(ax1)
 
-ax2.plot(time, ps, 'r-', zorder = 1000)
-ax2.set_ylabel('ps', color = 'red')
+for slope in slopes:
+    time = superH[slope]['time']
+    ps = superH[slope]['ps']
+    
+    ax1.plot(time, superH[slope]['psub'], '-', label = 'slope_ps = %.0f' % slope, zorder = max(slopes) / slope)
+    ax1.set_yscale('linear')
+
+    ax2.plot(time, ps, '-', zorder = 1000)
+    ax2.set_ylabel('ps')
 
 ax1.set_xlabel('time')
 
@@ -407,32 +542,24 @@ ax2.set_ylim(ymin = min(ps), ymax = max(ps))
 
 ax1.legend(loc = 'upper left')
 
-# <codecell>
+ax1.set_title('supercritical Hopf')
 
-time, r, phi, ps = run_iteration(supercritical, supercritical_jac, [r0 * 1.0, phi0, ps0], t0, omega, b, slope_ps = 50 * 0.5)
+fig1.canvas.draw()
 
-psub = r * np.sin(phi)
+###############################################
 
-omega, b, slope_ps = Hopf.f_params
-
-# instantaneous frequency
-
-F = (omega + b * r**3) / (2.0 * np.pi)
-
-# <codecell>
-
-if 0:
-    plt.close('all')
-    plt.clf()
-    fig, ax1 = plt.subplots()
-
-ax1.plot(time, psub, '-', label = 'slope_ps = %.0f' % slope_ps)
-ax1.set_yscale('linear')
-
+fig2, ax1 = plt.subplots()
 ax2 = plt.twinx(ax1)
 
-ax2.plot(time, ps, 'r-', zorder = 1000)
-ax2.set_ylabel('ps', color = 'red')
+for slope in slopes:
+    time = subH[slope]['time']
+    ps = subH[slope]['ps']
+    
+    ax1.plot(time, subH[slope]['psub'], '-', label = 'slope_ps = %.0f' % slope, zorder = max(slopes) / slope)
+    ax1.set_yscale('linear')
+
+    ax2.plot(time, ps, '-', zorder = 1000)
+    ax2.set_ylabel('ps')
 
 ax1.set_xlabel('time')
 
@@ -444,6 +571,8 @@ ax1.grid(False, axis = 'y')
 ax2.set_ylim(ymin = min(ps), ymax = max(ps))
 
 ax1.legend(loc = 'upper left')
+
+ax1.set_title('subcritical Hopf')
 
 # <codecell>
 
